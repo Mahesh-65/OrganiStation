@@ -8,6 +8,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 FROM python:3.11-slim
 WORKDIR /app
 RUN useradd --create-home appuser
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 COPY --from=build /usr/local /usr/local
 COPY --chown=appuser:appuser app.py .
 USER appuser
