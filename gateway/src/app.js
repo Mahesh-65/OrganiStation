@@ -56,7 +56,7 @@ const authenticateToken = (req, res, next) => {
                 message: 'Invalid or expired access token.'
             });
         }
-        
+
         // Block API access until first-login password change
         if (decoded.must_change_password) {
             const passwordChangeAllowed = [
@@ -77,7 +77,7 @@ const authenticateToken = (req, res, next) => {
         req.headers['x-user-email'] = decoded.sub || '';
         req.headers['x-user-role'] = decoded.role || '';
         req.headers['x-user-permissions'] = JSON.stringify(decoded.permissions || []);
-        
+
         next();
     });
 };
