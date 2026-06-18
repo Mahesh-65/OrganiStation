@@ -1,0 +1,18 @@
+# Global values for OrganiStation
+global:
+  namespace: organistation-ns
+
+auth:
+  enabled: true
+hr:
+  enabled: true
+ai:
+  enabled: true
+projects:
+  enabled: true
+finance:
+  enabled: true
+gateway:
+  enabled: true
+frontend:
+  enabled: true
