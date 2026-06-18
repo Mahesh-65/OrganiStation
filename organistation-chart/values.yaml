@@ -16,3 +16,9 @@ gateway:
   enabled: true
 frontend:
   enabled: true
+
+ingress:
+  enabled: true
+  name: organistation-ingress
+  sslRedirect: false
+  port: 80
