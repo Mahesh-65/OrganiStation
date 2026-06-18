@@ -129,8 +129,11 @@ async def get_summary():
 # ── Expenses ───────────────────────────────────────────────────────────────────
 
 @app.get("/api/expenses")
-async def list_expenses():
-    return [oid(e) async for e in db.expenses.find().sort("date", -1)]
+async def list_expenses(submitted_by: Optional[str] = None):
+    query = {}
+    if submitted_by:
+        query["submitted_by"] = submitted_by
+    return [oid(e) async for e in db.expenses.find(query).sort("date", -1)]
 
 @app.post("/api/expenses", status_code=201)
 async def create_expense(exp: Expense):

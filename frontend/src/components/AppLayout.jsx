@@ -1,31 +1,41 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   Cpu, LayoutDashboard, Users, FolderKanban,
-  DollarSign, Brain, Settings, LogOut, Bell, Search, UserPlus
+  DollarSign, Brain, Settings, LogOut, Bell, Search, UserPlus, CalendarClock
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { isEmployee } from '../utils/roles';
 
 const NAV = [
-  { section: 'Overview', items: [
-    { to: '/', label: 'Dashboard', icon: LayoutDashboard },
-  ]},
-  { section: 'Management', employeeSection: 'My Work', items: [
-    { to: '/hr',       label: 'HR & People',  icon: Users },
-    { to: '/projects', label: 'Projects',     icon: FolderKanban,  permission: 'projects:read' },
-    { to: '/finance',  label: 'Finance',      icon: DollarSign,  permission: 'finance:read' },
-  ]},
-  { section: 'Intelligence', employeeSection: 'Tools', items: [
-    { to: '/ai', label: 'AI Assistant', icon: Brain, permission: 'ai:chat' },
-  ]},
-  { section: 'Admin', employeeSection: 'Directory', items: [
-    { to: '/users', label: 'Team Directory', icon: UserPlus },
-    { to: '/settings', label: 'Settings', icon: Settings },
-  ]},
+  {
+    section: 'Overview', items: [
+      { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+    ]
+  },
+  {
+    section: 'Management', employeeSection: 'My Work', items: [
+      { to: '/hr', label: 'HR & People', icon: Users },
+      { to: '/leaves', label: 'Leaves & WFH', icon: CalendarClock },
+      { to: '/finance', label: 'Company Finance', icon: DollarSign, permission: 'finance:read' },
+      { to: '/my-finance', label: 'My Finance', icon: DollarSign },
+      { to: '/projects', label: 'Projects', icon: FolderKanban, permission: 'projects:read' },
+    ]
+  },
+  {
+    section: 'Intelligence', employeeSection: 'Tools', items: [
+      { to: '/ai', label: 'AI Assistant', icon: Brain, permission: 'ai:chat' },
+    ]
+  },
+  {
+    section: 'Admin', employeeSection: 'Directory', items: [
+      { to: '/users', label: 'Team Directory', icon: UserPlus },
+      { to: '/settings', label: 'Settings', icon: Settings },
+    ]
+  },
 ];
 
 function avatarColor(name = '') {
-  const colors = ['#6366f1','#22d3ee','#10b981','#f59e0b','#ec4899','#a78bfa','#f97316'];
+  const colors = ['#6366f1', '#22d3ee', '#10b981', '#f59e0b', '#ec4899', '#a78bfa', '#f97316'];
   return colors[name.charCodeAt(0) % colors.length];
 }
 
@@ -46,7 +56,7 @@ export default function AppLayout({ children, pageTitle }) {
     ...section,
     section: employee && section.employeeSection ? section.employeeSection : section.section,
     items: section.items.filter((item) => {
-      if (item.to === '/settings' || item.to === '/hr' || item.to === '/users') return true;
+      if (item.to === '/settings' || item.to === '/hr' || item.to === '/users' || item.to === '/leaves' || item.to === '/my-finance') return true;
       return !item.permission || hasPermission(item.permission);
     }),
   })).filter((section) => section.items.length > 0);
@@ -84,13 +94,13 @@ export default function AppLayout({ children, pageTitle }) {
         </nav>
 
         <div className="sidebar-footer">
-          <div style={{ display:'flex', alignItems:'center', gap:10, padding:'8px 10px', borderRadius:'var(--radius-md)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 'var(--radius-md)' }}>
             <div className="avatar avatar-sm" style={{ background: bg, color: '#fff' }}>{initials}</div>
-            <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontSize:13, fontWeight:600, color:'var(--text-primary)' }} className="truncate">
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }} className="truncate">
                 {user?.first_name} {user?.last_name}
               </div>
-              <div style={{ fontSize:11, color:'var(--text-muted)' }} className="truncate">{user?.role}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-muted)' }} className="truncate">{user?.role}</div>
             </div>
             <button className="btn btn-ghost btn-icon" onClick={handleLogout} title="Logout">
               <LogOut size={15} />
@@ -103,17 +113,17 @@ export default function AppLayout({ children, pageTitle }) {
         <span className="topbar-title">{pageTitle}</span>
         <div className="topbar-actions">
           {!employee && (
-            <div style={{ position:'relative' }}>
-              <Search size={14} style={{ position:'absolute', left:10, top:'50%', transform:'translateY(-50%)', color:'var(--text-muted)' }} />
+            <div style={{ position: 'relative' }}>
+              <Search size={14} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
               <input
                 className="form-input"
-                style={{ paddingLeft:32, width:220, height:34, background:'var(--bg-base)' }}
+                style={{ paddingLeft: 32, width: 220, height: 34, background: 'var(--bg-base)' }}
                 placeholder="Search..."
               />
             </div>
           )}
           <button className="btn btn-ghost btn-icon"><Bell size={17} /></button>
-          <div className="avatar avatar-sm" style={{ background: bg, color:'#fff' }}>{initials}</div>
+          <div className="avatar avatar-sm" style={{ background: bg, color: '#fff' }}>{initials}</div>
         </div>
       </header>
 

@@ -50,8 +50,16 @@ class Employee(BaseModel):
     position:    Optional[str] = None
     phone:       Optional[str] = None
     hire_date:   Optional[str] = None
-    salary:      Optional[float] = None
+    salary_lpa:  float = 0.0
+    monthly_take_home: float = 0.0
     status:      str = "active"
+    # Leave balances
+    annual_total:  int = 20
+    annual_used:   int = 0
+    sick_total:    int = 10
+    sick_used:     int = 0
+    wfh_total:     int = 12
+    wfh_used:      int = 0
 
 class LeaveRequest(BaseModel):
     employee_id: str
@@ -178,8 +186,11 @@ async def log_attendance(a: Attendance):
 # ── Leave Requests ─────────────────────────────────────────────────────────────
 
 @app.get("/api/leaves")
-async def list_leaves():
-    cur = db.leave_requests.find()
+async def list_leaves(employee_id: Optional[str] = None):
+    query = {}
+    if employee_id:
+        query["employee_id"] = employee_id
+    cur = db.leave_requests.find(query).sort("created_at", -1)
     return [oid(l) async for l in cur]
 
 @app.post("/api/leaves", status_code=201)
@@ -192,9 +203,43 @@ async def create_leave(req: LeaveRequest):
 
 @app.put("/api/leaves/{lid}")
 async def update_leave(lid: str, upd: LeaveUpdate):
-    await db.leave_requests.update_one({"_id": ObjectId(lid)}, {"$set": {"status": upd.status, "updated_at": datetime.utcnow()}})
+    # Get current leave info
+    leave = await db.leave_requests.find_one({"_id": ObjectId(lid)})
+    if not leave: raise HTTPException(404, "Leave request not found")
+    
+    old_status = leave.get("status")
+    new_status = upd.status
+    
+    # Update status
+    await db.leave_requests.update_one(
+        {"_id": ObjectId(lid)}, 
+        {"$set": {"status": new_status, "updated_at": datetime.utcnow()}}
+    )
+    
+    # If newly approved, update employee balance
+    if new_status == "approved" and old_status != "approved":
+        eid = leave.get("employee_id")
+        ltype = leave.get("type", "annual")
+        
+        # Calculate days (very simple version: just count days between start and end inclusive)
+        try:
+            fmt = "%Y-%m-%d"
+            start = datetime.strptime(leave["start_date"], fmt)
+            end = datetime.strptime(leave["end_date"], fmt)
+            days = (end - start).days + 1
+            if days < 0: days = 0
+            
+            field_name = f"{ltype}_used"
+            # We don't have separate unpaid balance, so we only update for annual, sick, wfh
+            if field_name in ["annual_used", "sick_used", "wfh_used"]:
+                await db.employees.update_one(
+                    {"_id": ObjectId(eid)},
+                    {"$inc": {field_name: days}}
+                )
+        except Exception as e:
+            print(f"Failed to update balance for leave {lid}: {e}")
+
     doc = await db.leave_requests.find_one({"_id": ObjectId(lid)})
-    if not doc: raise HTTPException(404, "Leave request not found")
     return oid(doc)
 
 # ── Jobs / Recruitment ─────────────────────────────────────────────────────────

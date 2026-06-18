@@ -64,10 +64,10 @@ async function request(path, options = {}, retry = true) {
 
 // Auth
 export const authApi = {
-  login:    (email, password) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
-  register: (data)            => request('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
-  logout:   (refresh_token)   => request(`/auth/logout?refresh_token=${refresh_token}`, { method: 'POST' }),
-  me:             () => request('/auth/me'),
+  login: (email, password) => request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
+  register: (data) => request('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
+  logout: (refresh_token) => request(`/auth/logout?refresh_token=${refresh_token}`, { method: 'POST' }),
+  me: () => request('/auth/me'),
   changePassword: (current_password, new_password) =>
     request('/auth/change-password', { method: 'POST', body: JSON.stringify({ current_password, new_password }) }),
   setTokens,
@@ -77,25 +77,25 @@ export const authApi = {
 
 // Users
 export const usersApi = {
-  list:    ()          => request('/users'),
-  create:  (data)     => request('/users', { method: 'POST', body: JSON.stringify(data) }),
-  get:     (id)        => request(`/users/${id}`),
-  update:  (id, data)  => request(`/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  remove:  (id)        => request(`/users/${id}`, { method: 'DELETE' }),
+  list: () => request('/users'),
+  create: (data) => request('/users', { method: 'POST', body: JSON.stringify(data) }),
+  get: (id) => request(`/users/${id}`),
+  update: (id, data) => request(`/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  remove: (id) => request(`/users/${id}`, { method: 'DELETE' }),
 };
 
 // Roles
 export const rolesApi = {
-  list:        ()           => request('/roles'),
-  permissions: ()           => request('/permissions'),
+  list: () => request('/roles'),
+  permissions: () => request('/permissions'),
 };
 
 // AI Service
 export const aiApi = {
-  health:    ()       => request('/ai/health'),
-  documents: ()       => request('/ai/documents'),
-  query:     (q)      => request('/ai/query', { method: 'POST', body: JSON.stringify({ query: q }) }),
-  reset:     ()       => request('/ai/reset', { method: 'POST' }),
+  health: () => request('/ai/health'),
+  documents: () => request('/ai/documents'),
+  query: (q) => request('/ai/query', { method: 'POST', body: JSON.stringify({ query: q }) }),
+  reset: () => request('/ai/reset', { method: 'POST' }),
   ingest: (file) => {
     const fd = new FormData();
     fd.append('file', file);
@@ -110,42 +110,42 @@ export const aiApi = {
 
 // HR Service
 export const hrApi = {
-  employees:         ()           => request('/hr/employees'),
-  getEmployee:       (id)         => request(`/hr/employees/${id}`),
-  createEmployee:    (d)          => request('/hr/employees', { method: 'POST', body: JSON.stringify(d) }),
-  updateEmployee:    (id, d)      => request(`/hr/employees/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
-  deleteEmployee:    (id)         => request(`/hr/employees/${id}`, { method: 'DELETE' }),
-  attendance:        (id)         => request(`/hr/employees/${id}/attendance`),
-  leaveRequests:     ()           => request('/hr/leaves'),
-  createLeave:       (d)          => request('/hr/leaves', { method: 'POST', body: JSON.stringify(d) }),
-  updateLeave:       (id, status) => request(`/hr/leaves/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }),
-  jobs:              ()           => request('/hr/jobs'),
-  createJob:         (d)          => request('/hr/jobs', { method: 'POST', body: JSON.stringify(d) }),
+  employees: () => request('/hr/employees'),
+  getEmployee: (id) => request(`/hr/employees/${id}`),
+  createEmployee: (d) => request('/hr/employees', { method: 'POST', body: JSON.stringify(d) }),
+  updateEmployee: (id, d) => request(`/hr/employees/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
+  deleteEmployee: (id) => request(`/hr/employees/${id}`, { method: 'DELETE' }),
+  attendance: (id) => request(`/hr/employees/${id}/attendance`),
+  leaveRequests: (employeeId) => request(`/hr/leaves${employeeId ? `?employee_id=${employeeId}` : ''}`),
+  createLeave: (d) => request('/hr/leaves', { method: 'POST', body: JSON.stringify(d) }),
+  updateLeave: (id, status) => request(`/hr/leaves/${id}`, { method: 'PUT', body: JSON.stringify({ status }) }),
+  jobs: () => request('/hr/jobs'),
+  createJob: (d) => request('/hr/jobs', { method: 'POST', body: JSON.stringify(d) }),
 };
 
 // Project Service
 export const projectApi = {
-  projects:      ()      => request('/projects/projects'),
-  getProject:    (id)    => request(`/projects/projects/${id}`),
-  createProject: (d)     => request('/projects/projects', { method: 'POST', body: JSON.stringify(d) }),
+  projects: () => request('/projects/projects'),
+  getProject: (id) => request(`/projects/projects/${id}`),
+  createProject: (d) => request('/projects/projects', { method: 'POST', body: JSON.stringify(d) }),
   updateProject: (id, d) => request(`/projects/projects/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
-  tasks:         (pid)   => request(`/projects/projects/${pid}/tasks`),
-  createTask:    (pid, d)=> request(`/projects/projects/${pid}/tasks`, { method: 'POST', body: JSON.stringify(d) }),
-  updateTask:    (id, d) => request(`/projects/tasks/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
-  tickets:       ()      => request('/projects/tickets'),
-  createTicket:  (d)     => request('/projects/tickets', { method: 'POST', body: JSON.stringify(d) }),
-  updateTicket:  (id, d) => request(`/projects/tickets/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
+  tasks: (pid) => request(`/projects/projects/${pid}/tasks`),
+  createTask: (pid, d) => request(`/projects/projects/${pid}/tasks`, { method: 'POST', body: JSON.stringify(d) }),
+  updateTask: (id, d) => request(`/projects/tasks/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
+  tickets: () => request('/projects/tickets'),
+  createTicket: (d) => request('/projects/tickets', { method: 'POST', body: JSON.stringify(d) }),
+  updateTicket: (id, d) => request(`/projects/tickets/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
 };
 
 // Finance Service
 export const financeApi = {
-  expenses:       ()      => request('/finance/expenses'),
-  createExpense:  (d)     => request('/finance/expenses', { method: 'POST', body: JSON.stringify(d) }),
-  updateExpense:  (id, d) => request(`/finance/expenses/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
-  budgets:        ()      => request('/finance/budgets'),
-  createBudget:   (d)     => request('/finance/budgets', { method: 'POST', body: JSON.stringify(d) }),
-  invoices:       ()      => request('/finance/invoices'),
-  createInvoice:  (d)     => request('/finance/invoices', { method: 'POST', body: JSON.stringify(d) }),
-  updateInvoice:  (id, d) => request(`/finance/invoices/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
-  summary:        ()      => request('/finance/summary'),
+  expenses: (submittedBy) => request(`/finance/expenses${submittedBy ? `?submitted_by=${submittedBy}` : ''}`),
+  createExpense: (d) => request('/finance/expenses', { method: 'POST', body: JSON.stringify(d) }),
+  updateExpense: (id, d) => request(`/finance/expenses/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
+  budgets: () => request('/finance/budgets'),
+  createBudget: (d) => request('/finance/budgets', { method: 'POST', body: JSON.stringify(d) }),
+  invoices: () => request('/finance/invoices'),
+  createInvoice: (d) => request('/finance/invoices', { method: 'POST', body: JSON.stringify(d) }),
+  updateInvoice: (id, d) => request(`/finance/invoices/${id}`, { method: 'PUT', body: JSON.stringify(d) }),
+  summary: () => request('/finance/summary'),
 };

@@ -37,9 +37,46 @@ CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH", "./chroma_db")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip() or None
 
 TEMP_DIR = "./temp_uploads"
+DOCS_DIR = "./uploads"
 os.makedirs(TEMP_DIR, exist_ok=True)
+os.makedirs(DOCS_DIR, exist_ok=True)
 
 rag_pipeline = RAGPipeline(db_path=CHROMA_DB_PATH, groq_api_key=GROQ_API_KEY)
+
+
+@app.get("/api/documents/view/{doc_hash}")
+@app.get("/documents/view/{doc_hash}")
+def view_document(doc_hash: str):
+    """Serve the original document file for viewing."""
+    try:
+        # Find the file in DOCS_DIR that starts with the doc_hash
+        target_file = None
+        for f in os.listdir(DOCS_DIR):
+            if f.startswith(doc_hash):
+                target_file = f
+                break
+        
+        if not target_file:
+            raise HTTPException(status_code=404, detail="Original document file not found.")
+            
+        file_path = os.path.join(DOCS_DIR, target_file)
+        from fastapi.responses import FileResponse
+        
+        # Determine media type
+        ext = os.path.splitext(target_file)[1].lower()
+        media_type = "application/octet-stream"
+        if ext == ".pdf":
+            media_type = "application/pdf"
+        elif ext == ".txt":
+            media_type = "text/plain"
+        elif ext == ".md":
+            media_type = "text/markdown"
+            
+        return FileResponse(file_path, media_type=media_type, filename=target_file[13:]) # strip doc_hash_
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error retrieving file: {str(e)}")
 
 
 class QueryRequest(BaseModel):
@@ -93,6 +130,13 @@ async def ingest_document(
             shutil.copyfileobj(file.file, buffer)
 
         result = rag_pipeline.ingest_document(temp_file_path, file.filename)
+        
+        # Save permanently for viewing
+        doc_hash = result["id"]
+        perm_file_name = f"{doc_hash}_{file.filename}"
+        perm_file_path = os.path.join(DOCS_DIR, perm_file_name)
+        shutil.copy2(temp_file_path, perm_file_path)
+        
         return {
             "status": "success",
             "message": f"Document '{file.filename}' successfully ingested and vectorized.",
@@ -126,7 +170,16 @@ def delete_document(doc_hash: str, _: None = Depends(require_ai_admin)):
         success = rag_pipeline.delete_document(doc_hash)
         if not success:
             raise HTTPException(status_code=404, detail="Document not found or already deleted.")
-        return {"status": "success", "message": f"Document ID '{doc_hash}' and its embeddings removed successfully."}
+        
+        # Clean up physical file
+        for f in os.listdir(DOCS_DIR):
+            if f.startswith(doc_hash):
+                try:
+                    os.remove(os.path.join(DOCS_DIR, f))
+                except Exception as e:
+                    print(f"Error removing file {f}: {e}")
+        
+        return {"status": "success", "message": f"Document ID '{doc_hash}' and its physical file removed successfully."}
     except HTTPException:
         raise
     except Exception as e:
@@ -138,7 +191,15 @@ def delete_document(doc_hash: str, _: None = Depends(require_ai_admin)):
 def reset_database(_: None = Depends(require_ai_admin)):
     try:
         rag_pipeline.reset_database()
-        return {"status": "success", "message": "Vector database collection successfully cleared."}
+        
+        # Clean up all physical files
+        for f in os.listdir(DOCS_DIR):
+            try:
+                os.remove(os.path.join(DOCS_DIR, f))
+            except Exception as e:
+                print(f"Error removing file {f}: {e}")
+                
+        return {"status": "success", "message": "Vector database and physical document store successfully cleared."}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Database reset failed: {str(e)}")
 
