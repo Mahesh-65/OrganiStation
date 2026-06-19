@@ -39,10 +39,12 @@ spec:
           runAsNonRoot: true
           runAsUser: 1001
           allowPrivilegeEscalation: false
+        {{- if .Values.secrets }}
         volumeMounts:
         - name: secrets-store-inline
           mountPath: "/mnt/secrets-store"
           readOnly: true
+        {{- end }}
         readinessProbe:
           httpGet:
             path: {{ .Values.service.healthPath | default "/health" }}
@@ -55,6 +57,7 @@ spec:
             port: {{ .Values.service.targetPort }}
           initialDelaySeconds: 15
           periodSeconds: 20
+      {{- if .Values.secrets }}
       volumes:
       - name: secrets-store-inline
         csi:
@@ -62,3 +65,4 @@ spec:
           readOnly: true
           volumeAttributes:
             secretProviderClass: "{{ .Values.name }}-kv-secrets"
+      {{- end }}
