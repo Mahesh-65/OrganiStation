@@ -35,10 +35,6 @@ spec:
         {{- end }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
-        securityContext:
-          runAsNonRoot: true
-          runAsUser: 1001
-          allowPrivilegeEscalation: false
         {{- if .Values.secrets }}
         volumeMounts:
         - name: secrets-store-inline
@@ -49,13 +45,13 @@ spec:
           httpGet:
             path: {{ .Values.service.healthPath | default "/" }}
             port: {{ .Values.service.targetPort }}
-          initialDelaySeconds: 5
-          periodSeconds: 10
+          initialDelaySeconds: 10
+          periodSeconds: 15
         livenessProbe:
           httpGet:
             path: {{ .Values.service.healthPath | default "/" }}
             port: {{ .Values.service.targetPort }}
-          initialDelaySeconds: 15
+          initialDelaySeconds: 30
           periodSeconds: 20
       {{- if .Values.secrets }}
       volumes:
