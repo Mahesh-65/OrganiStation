@@ -19,3 +19,9 @@ resources:
   requests:
     cpu: 200m
     memory: 256Mi
+
+secrets:
+  - name: "JWT-SECRET"
+    key: "JWT_SECRET"
+  - name: "INTERNAL-SERVICE-SECRET"
+    key: "INTERNAL_SERVICE_SECRET"

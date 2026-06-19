@@ -19,3 +19,9 @@ resources:
   requests:
     cpu: 100m
     memory: 128Mi
+
+secrets:
+  - name: "MONGODB-URI"
+    key: "MONGODB_URI"
+  - name: "INTERNAL-SERVICE-SECRET"
+    key: "INTERNAL_SERVICE_SECRET"
