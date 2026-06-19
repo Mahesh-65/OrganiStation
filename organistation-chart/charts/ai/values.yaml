@@ -21,7 +21,5 @@ resources:
     memory: 1Gi
 
 secrets:
-  - name: "GEMINI-API-KEY"
-    key: "GEMINI_API_KEY"
   - name: "GROQ-API-KEY"
     key: "GROQ_API_KEY"
