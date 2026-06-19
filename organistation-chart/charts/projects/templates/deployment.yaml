@@ -28,10 +28,8 @@ spec:
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         ports:
         - containerPort: {{ .Values.service.targetPort }}
-        envFrom:
-        - configMapRef:
-            name: {{ .Values.name }}-config
         {{- if .Values.secrets }}
+        envFrom:
         - secretRef:
             name: {{ .Values.name }}-secret
         {{- end }}
