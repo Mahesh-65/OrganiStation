@@ -31,8 +31,10 @@ spec:
         envFrom:
         - configMapRef:
             name: {{ .Values.name }}-config
+        {{- if .Values.secrets }}
         - secretRef:
             name: {{ .Values.name }}-secret
+        {{- end }}
         resources:
 {{ toYaml .Values.resources | indent 10 }}
         securityContext:
