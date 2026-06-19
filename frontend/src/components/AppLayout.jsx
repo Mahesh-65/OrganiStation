@@ -9,7 +9,7 @@ import { isEmployee } from '../utils/roles';
 const NAV = [
   {
     section: 'Overview', items: [
-      { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+      { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     ]
   },
   {

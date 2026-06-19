@@ -4,12 +4,12 @@ import { Cpu, Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
-  const { login }   = useAuth();
-  const navigate    = useNavigate();
-  const [form, setForm]       = useState({ email: '', password: '' });
-  const [error, setError]     = useState('');
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [form, setForm] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPw, setShowPw]   = useState(false);
+  const [showPw, setShowPw] = useState(false);
 
   const handleChange = e => setForm(f => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -19,7 +19,7 @@ export default function LoginPage() {
     setLoading(true);
     try {
       const me = await login(form.email, form.password);
-      navigate(me?.must_change_password ? '/change-password' : '/');
+      navigate(me?.must_change_password ? '/change-password' : '/dashboard');
     } catch (err) {
       setError(err.message || 'Login failed. Please check your credentials.');
     } finally {

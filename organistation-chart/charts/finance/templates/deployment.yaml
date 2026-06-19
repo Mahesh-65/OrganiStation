@@ -3,6 +3,8 @@ kind: Deployment
 metadata:
   name: {{ .Values.name }}
   namespace: organistation-ns
+  labels:
+    azure.workload.identity/use: "true"
 spec:
   replicas: {{ .Values.replicaCount }}
   strategy:
@@ -17,7 +19,9 @@ spec:
     metadata:
       labels:
         app: {{ .Values.name }}
+        azure.workload.identity/use: "true"
     spec:
+      serviceAccountName: {{ .Values.name }}-sa
       containers:
       - name: {{ .Values.name }}
         image: "{{ .Values.image.name }}:{{ .Values.image.tag }}"
