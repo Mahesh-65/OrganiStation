@@ -26,6 +26,22 @@ class RAGPipeline:
 
         os.makedirs(db_path, exist_ok=True)
 
+        # Cloud PDF Store
+        self.connection_string = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
+        self.container_name = "documents"
+        self.blob_service_client = None
+        
+        if self.connection_string:
+            try:
+                self.blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+                # Ensure container exists
+                container_client = self.blob_service_client.get_container_client(self.container_name)
+                if not container_client.exists():
+                    container_client.create_container()
+                logger.info("Azure Blob Storage connected successfully.")
+            except Exception as e:
+                logger.error(f"Failed to connect to Azure Blob Storage: {str(e)}")
+
         self.embedding_fn = LocalEmbeddingFunction()
         self.chroma_client = chromadb.PersistentClient(path=db_path)
         self.collection = self.chroma_client.get_or_create_collection(
@@ -114,14 +130,27 @@ class RAGPipeline:
         if not chunks:
             raise ValueError("Document was empty or too small to chunk.")
 
-        doc_hash = hashlib.sha256(filename.encode("utf-8")).hexdigest()[:12]
-        ids = [f"{doc_hash}_ch_{i}" for i in range(len(chunks))]
-        metadatas = [{"filename": filename, "chunk_index": i, "doc_hash": doc_hash} for i in range(len(chunks))]
+        # Generate unique hash for the document
+        doc_hash = hashlib.md5(raw_text.encode()).hexdigest()
+        
+        # Upload to Azure Blob Storage if available
+        blob_url = ""
+        if self.blob_service_client:
+            blob_client = self.blob_service_client.get_blob_client(container=self.container_name, blob=f"{doc_hash}_{filename}")
+            with open(temp_file_path, "rb") as data:
+                blob_client.upload_blob(data, overwrite=True)
+            blob_url = blob_client.url
 
         self.collection.add(
-            ids=ids,
+            ids=[f"{doc_hash}_{i}" for i in range(len(chunks))],
             documents=chunks,
-            metadatas=metadatas,
+            metadatas=[{
+                "filename": filename,
+                "doc_hash": doc_hash,
+                "chunk_id": i,
+                "blob_url": blob_url,
+                "ingested_at": datetime.now().isoformat()
+            } for i in range(len(chunks))]
         )
 
         return {

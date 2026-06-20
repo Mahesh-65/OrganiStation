@@ -36,6 +36,43 @@ module "monitoring" {
   retention_days      = local.config.log_retention_days
 }
 
+module "private_dns" {
+  source              = "./modules/private_dns"
+  resource_group_name = module.resource_group.name
+  vnet_id             = module.networking.vnet_id
+}
+
+module "storage" {
+  source              = "./modules/storage"
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
+  name                = "${var.project_name}store${local.env}"
+  subnet_id           = module.networking.private_endpoints_subnet_id
+  dns_zone_blob_id    = module.private_dns.blob_dns_zone_id
+  dns_zone_file_id    = module.private_dns.file_dns_zone_id
+}
+
+module "servicebus" {
+  source              = "./modules/servicebus"
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
+  name                = "${var.project_name}-sb-${local.env}"
+  sku                 = local.env == "prod" ? "Premium" : "Standard"
+}
+
+module "signalr" {
+  source              = "./modules/signalr"
+  resource_group_name = module.resource_group.name
+  location            = module.resource_group.location
+  name                = "${var.project_name}-signalr-${local.env}"
+}
+
+module "communication_services" {
+  source              = "./modules/communication_services"
+  resource_group_name = module.resource_group.name
+  name                = "${var.project_name}-acs-${local.env}"
+}
+
 module "keyvault" {
   source              = "./modules/keyvault"
   resource_group_name = module.resource_group.name
@@ -45,7 +82,7 @@ module "keyvault" {
   sku_name            = local.config.kv_sku
   subnet_id           = module.networking.private_endpoints_subnet_id
   dns_zone_id         = module.private_dns.kv_dns_zone_id
-  aks_identity_id     = module.identity.aks_workload_identity_client_id
+  aks_identity_id     = module.identity.aks_workload_identity_id
 }
 
 module "cosmosdb" {
@@ -56,12 +93,6 @@ module "cosmosdb" {
   throughput          = local.config.cosmos_throughput
   subnet_id           = module.networking.private_endpoints_subnet_id
   dns_zone_id         = module.private_dns.cosmos_dns_zone_id
-}
-
-module "private_dns" {
-  source              = "./modules/private_dns"
-  resource_group_name = module.resource_group.name
-  vnet_id             = module.networking.vnet_id
 }
 
 module "aks" {
@@ -92,4 +123,13 @@ module "bastion" {
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
   subnet_id           = module.networking.bastion_subnet_id
+}
+
+module "workload_federation" {
+  source              = "./modules/workload_federation"
+  resource_group_name = module.resource_group.name
+  oidc_issuer_url     = module.aks.oidc_issuer_url
+  namespace           = local.config.namespace
+  env                 = local.env
+  parent_id           = module.identity.aks_workload_identity_id
 }

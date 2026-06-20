@@ -1,6 +1,6 @@
 # Global values for OrganiStation
 global:
-  namespace: organistation-ns
+  namespace: {{ .Values.global.namespace | required "A global namespace must be defined in your values file!" }}
   keyvaultName: "your-kv-name"
   azureTenantId: "your-tenant-id"
   userAssignedIdentityID: ""
@@ -18,6 +18,8 @@ finance:
 gateway:
   enabled: true
 frontend:
+  enabled: true
+notification:
   enabled: true
 
 ingress:

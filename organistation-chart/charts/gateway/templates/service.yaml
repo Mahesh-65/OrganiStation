@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Values.name }}
-  namespace: organistation-ns
+  namespace: {{ .Values.global.namespace | required "A global namespace must be defined in your values file!" }}
 spec:
   type: {{ .Values.service.type | default "ClusterIP" }}
   ports:

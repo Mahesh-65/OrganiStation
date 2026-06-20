@@ -1,8 +1,18 @@
+# ==============================================================================
+# ARCHITECTURE NOTE: STATELESS DESIGN & LOAD DISTRIBUTION
+# ------------------------------------------------------------------------------
+# 1. Stateless Design: 
+#    - All microservices are strictly stateless. 
+#    - Session state is managed via JWT; data persists in Azure Cosmos DB.
+# 2. Load Distribution:
+#    - Multiple replicas are managed by Kubernetes Deployment.
+#    - Service-based Round Robin distribution across Pods.
+# ==============================================================================
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.name }}
-  namespace: organistation-ns
+  namespace: {{ .Values.global.namespace | required "A global namespace must be defined in your values file!" }}
   labels:
     azure.workload.identity/use: "true"
 spec:
@@ -62,3 +72,24 @@ spec:
           volumeAttributes:
             secretProviderClass: "{{ .Values.name }}-kv-secrets"
       {{- end }}
+
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.name }}
+  namespace: {{ .Values.global.namespace | required "A global namespace must be defined in your values file!" }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ .Values.name }}
+  minReplicas: {{ .Values.replicaCount }}
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 80
