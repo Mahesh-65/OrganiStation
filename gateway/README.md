@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ?? API Gateway
 
-IaC project using custom modules and OIDC authentication for Azure.
+Nginx-based entry point. Handshaking for JWT validation and routing to backend services.
 
 ## ?? Getting Started
 1. Check the .env.example

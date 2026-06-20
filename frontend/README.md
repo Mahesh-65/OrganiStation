@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ?? Frontend SPA
 
-IaC project using custom modules and OIDC authentication for Azure.
+React 18 + Vite dashboard. Impressive UI with role-based component exposure.
 
 ## ?? Getting Started
 1. Check the .env.example

@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ?? Finance Service
 
-IaC project using custom modules and OIDC authentication for Azure.
+Handles expenses, budgets, invoices, and financial reporting.
 
 ## ?? Getting Started
 1. Check the .env.example

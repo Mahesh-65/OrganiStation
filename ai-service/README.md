@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ?? AI/RAG Service
 
-IaC project using custom modules and OIDC authentication for Azure.
+Implements Retrieval-Augmented Generation using ChromaDB and Groq/Gemini LLMs. Manages PDF ingestion.
 
 ## ?? Getting Started
 1. Check the .env.example

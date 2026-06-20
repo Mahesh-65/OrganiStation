@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ?? HR Service
 
-IaC project using custom modules and OIDC authentication for Azure.
+Manages employee lifecycle, attendance, leave requests, and job postings.
 
 ## ?? Getting Started
 1. Check the .env.example

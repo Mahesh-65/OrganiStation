@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ?? Auth Service
 
-IaC project using custom modules and OIDC authentication for Azure.
+Responsible for Identity, JWT issuance, and RBAC. Uses MongoDB for user/role storage.
 
 ## ?? Getting Started
 1. Check the .env.example

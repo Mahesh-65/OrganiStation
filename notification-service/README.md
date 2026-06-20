@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ?? Notification Service
 
-IaC project using custom modules and OIDC authentication for Azure.
+Real-time web notifications (SignalR) and email delivery (ACS). Consumes Service Bus events.
 
 ## ?? Getting Started
 1. Check the .env.example

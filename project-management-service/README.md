@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ?? Project Management Service
 
-IaC project using custom modules and OIDC authentication for Azure.
+Orchestrates projects, tasks, milestones, and support tickets.
 
 ## ?? Getting Started
 1. Check the .env.example

@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ? Helm Umbrella Chart
 
-IaC project using custom modules and OIDC authentication for Azure.
+Kubernetes orchestration folder for both dev and prod environments.
 
 ## ?? Getting Started
 1. Check the .env.example

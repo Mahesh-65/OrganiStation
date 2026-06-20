@@ -1,6 +1,6 @@
-# ??? Terraform Infrastructure
+# ?? Shared Workflows
 
-IaC project using custom modules and OIDC authentication for Azure.
+Centralized GitHub Actions logic (SonarCloud, Snyk, Trivy, ACR) for all repositories.
 
 ## ?? Getting Started
 1. Check the .env.example
