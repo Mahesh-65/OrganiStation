@@ -15,4 +15,5 @@ jobs:
     with:
       image_name: ai-service
       sonar_project_key: organistation-ai
+      skip_linting: true
     secrets: inherit

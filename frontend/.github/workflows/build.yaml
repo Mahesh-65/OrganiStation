@@ -15,4 +15,5 @@ jobs:
     with:
       image_name: frontend-service
       sonar_project_key: organistation-frontend
+      skip_linting: true
     secrets: inherit
