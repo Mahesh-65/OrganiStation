@@ -25,3 +25,10 @@ secrets:
     key: "JWT_SECRET"
   - name: "INTERNAL-SERVICE-SECRET"
     key: "INTERNAL_SERVICE_SECRET"
+
+serviceUrls:
+  authPort: 8001
+  aiPort: 8000
+  hrPort: 8002
+  projectsPort: 8003
+  financePort: 8004
