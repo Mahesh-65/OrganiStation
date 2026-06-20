@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: OrganiStation-org/shared-workflows/.github/workflows/reusable-workflow.yaml@develop
+    uses: OrganiStation-org/shared-workflows/.github/workflows/reusable-ci.yaml@develop
     with:
       image_name: notification-service
       sonar_project_key: organistation-notification
