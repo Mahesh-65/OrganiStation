@@ -4,24 +4,26 @@ metadata:
   name: {{ .Values.ingress.name | default "organistation-ingress" }}
   namespace: organistation-ns
   annotations:
-    kubernetes.io/ingress.class: azure/application-gateway
     appgw.ingress.kubernetes.io/ssl-redirect: "{{ .Values.ingress.sslRedirect | default "false" }}"
     appgw.ingress.kubernetes.io/override-frontend-port: "{{ .Values.ingress.port | default "80" }}"
 spec:
+  ingressClassName: azure-application-gateway
+
   rules:
-  - http:
-      paths:
-      - path: /api
-        pathType: Prefix
-        backend:
-          service:
-            name: gateway
-            port:
-              number: 80
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: frontend
-            port:
-              number: 80
+    - http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: gateway
+                port:
+                  number: 80
+
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
