@@ -1,0 +1,1 @@
+{"name":"terraform-prod-env-federation","issuer":"https://token.actions.githubusercontent.com","subject":"repo:OrganiStation-org/terraform-project:environment:production","description":"Allow GitHub Production Environment to deploy","audiences":["api://AzureADTokenExchange"]}
