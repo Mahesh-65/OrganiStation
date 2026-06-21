@@ -45,7 +45,7 @@ jobs:
         run: terraform plan -no-color -out=tfplan
         
       - name: Save Plan Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: tfplan
@@ -73,7 +73,7 @@ jobs:
             -backend-config="key=terraform.tfstate"
 
       - name: Download Plan Artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: tfplan
 

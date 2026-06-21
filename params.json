@@ -1,0 +1,1 @@
+{"name":"terraform-infra-federation","issuer":"https://token.actions.githubusercontent.com","subject":"repo:OrganiStation-org/terraform-project:ref:refs/heads/main","description":"Allow GitHub to deploy infrastructure","audiences":["api://AzureADTokenExchange"]}
