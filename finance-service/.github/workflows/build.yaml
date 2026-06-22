@@ -14,7 +14,7 @@ jobs:
       id-token: write
       security-events: write
       pull-requests: write
-    uses: OrganiStation-org/shared-workflows/.github/workflows/reusable-ci.yaml@main
+    uses: OrganiStation-org/shared-workflows/.github/workflows/reusable-ci.yaml@v2
     with:
       image_name: finance-service
       sonar_project_key: organistation-finance
