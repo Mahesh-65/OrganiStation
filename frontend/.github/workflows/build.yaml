@@ -1,8 +1,8 @@
-name: Microservice CI Pipeline
+name: Frontend CI Pipeline
 
 on:
   push:
-    branches: [ develop ]
+    branches: [ develop, main ]
   pull_request:
     branches: [ main ]
 
@@ -11,9 +11,13 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: OrganiStation-org/shared-workflows/.github/workflows/reusable-ci.yaml@develop
+      id-token: write
+      security-events: write
+      pull-requests: write
+    uses: OrganiStation-org/shared-workflows/.github/workflows/reusable-ci.yaml@main
     with:
       image_name: frontend-service
       sonar_project_key: organistation-frontend
+      sonar_org: "OrganiStation-org"
       skip_linting: true
     secrets: inherit

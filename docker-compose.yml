@@ -120,6 +120,7 @@ services:
       HR_SERVICE_URL: http://hr:8002
       PROJECT_SERVICE_URL: http://projects:8003
       FINANCE_SERVICE_URL: http://finance:8004
+      NOTIFICATION_SERVICE_URL: http://notification:8005
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:3000/api/health" ]
       interval: 15s
