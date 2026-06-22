@@ -11,9 +11,8 @@ jobs:
     permissions:
       contents: read
       packages: write
-      id-token: write
-      security-events: write
-      pull-requests: write
+      security-events: write   # UNLOCKS: Trivy Security Scan Reports
+      pull-requests: write     # UNLOCKS: SonarCloud PR Feedback
     uses: OrganiStation-org/shared-workflows/.github/workflows/reusable-ci.yaml@main
     with:
       image_name: auth-service
