@@ -18,5 +18,5 @@ jobs:
     with:
       image_name: hr-service
       sonar_project_key: organistation-hr
-      sonar_org: "OrganiStation-org"
+      sonar_org: "organistation-org"
     secrets: inherit

@@ -18,5 +18,5 @@ jobs:
     with:
       image_name: finance-service
       sonar_project_key: organistation-finance
-      sonar_org: "OrganiStation-org"
+      sonar_org: "organistation-org"
     secrets: inherit

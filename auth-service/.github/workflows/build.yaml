@@ -18,5 +18,5 @@ jobs:
     with:
       image_name: auth-service
       sonar_project_key: organistation-auth
-      sonar_org: "OrganiStation-org" # Fixed: Added missing required input
+      sonar_org: "organistation-org"
     secrets: inherit

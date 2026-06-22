@@ -18,5 +18,5 @@ jobs:
     with:
       image_name: notification-service
       sonar_project_key: organistation-notification
-      sonar_org: "OrganiStation-org"
+      sonar_org: "organistation-org"
     secrets: inherit
