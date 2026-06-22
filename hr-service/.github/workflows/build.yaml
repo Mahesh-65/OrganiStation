@@ -19,4 +19,5 @@ jobs:
       image_name: hr-service
       sonar_project_key: organistation-hr
       sonar_org: "organistation-org"
+      language: "python"
     secrets: inherit

@@ -19,4 +19,5 @@ jobs:
       image_name: notification-service
       sonar_project_key: organistation-notification
       sonar_org: "organistation-org"
+      language: "python"
     secrets: inherit

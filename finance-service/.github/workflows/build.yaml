@@ -19,4 +19,5 @@ jobs:
       image_name: finance-service
       sonar_project_key: organistation-finance
       sonar_org: "organistation-org"
+      language: "python"
     secrets: inherit

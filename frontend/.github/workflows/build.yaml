@@ -20,4 +20,5 @@ jobs:
       sonar_project_key: organistation-frontend
       sonar_org: "organistation-org"
       skip_linting: true
+      language: "node"
     secrets: inherit
