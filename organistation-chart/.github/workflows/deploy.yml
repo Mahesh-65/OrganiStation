@@ -57,7 +57,6 @@ jobs:
             --set finance.image.name=${{ secrets.ACR_LOGIN_SERVER }}/finance \
             --set projects.image.name=${{ secrets.ACR_LOGIN_SERVER }}/projects \
             --set gateway.image.name=${{ secrets.ACR_LOGIN_SERVER }}/gateway \
-            --set frontend.image.name=${{ secrets.ACR_LOGIN_SERVER }}/frontend \
             --set notification.image.name=${{ secrets.ACR_LOGIN_SERVER }}/notification \
             --wait \
             --timeout 10m \
