@@ -131,6 +131,21 @@ services:
       - hr
       - projects
       - finance
+      - notification
+
+  notification:
+    build: ./notification-service
+    image: maheshnandi/organistation-notification:v1.0.0
+    restart: unless-stopped
+    environment:
+      PORT: 8005
+      HOST: 0.0.0.0
+      MONGODB_URI: mongodb://mongo:27017
+      DB_NAME: organistation_notification
+      INTERNAL_SERVICE_SECRET: ${INTERNAL_SERVICE_SECRET:-organistation_internal_secret}
+    depends_on:
+      mongo:
+        condition: service_healthy
 
   frontend:
     build: ./frontend
