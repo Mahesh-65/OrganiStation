@@ -81,6 +81,7 @@ module "monitoring" {
   location            = module.resource_group.location
   env                 = local.env
   retention_days      = local.config.log_retention_days
+  project_name        = local.project_id
   tags                = local.common_tags
 }
 
@@ -110,7 +111,7 @@ module "servicebus" {
   resource_group_name = module.resource_group.name
   location            = module.resource_group.location
   name                = "${local.project_id}-sb-${local.env}"
-  sku                 = local.env == "prod" ? "Premium" : "Standard"
+  sku                 = "Standard"
   tags                = local.common_tags
 }
 
@@ -169,6 +170,7 @@ module "aks" {
   max_count           = local.config.max_count
   min_count           = local.config.min_count
   log_analytics_id    = module.monitoring.log_analytics_id
+  prometheus_id       = module.monitoring.prometheus_id
   tags                = local.common_tags
 }
 
