@@ -18,6 +18,10 @@ env:
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ARM_USE_OIDC: true
 
+defaults:
+  run:
+    working-directory: terraform-project
+
 jobs:
   terraform-plan:
     name: Terraform Plan
@@ -37,18 +41,21 @@ jobs:
             -backend-config="container_name=tfstate" \
             -backend-config="key=terraform.tfstate"
 
+      - name: Terraform Workspace Select/Create
+        run: terraform workspace select prod || terraform workspace new prod
+
       - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color -out=tfplan
+        run: terraform plan -no-color -var-file="prod.tfvars" -out=tfplan
         
       - name: Save Plan Artifact
         uses: actions/upload-artifact@v4
         with:
           name: tfplan
-          path: tfplan
+          path: terraform-project/tfplan
 
   terraform-apply:
     name: Terraform Apply
@@ -72,10 +79,14 @@ jobs:
             -backend-config="container_name=tfstate" \
             -backend-config="key=terraform.tfstate"
 
+      - name: Terraform Workspace Select
+        run: terraform workspace select prod
+
       - name: Download Plan Artifact
         uses: actions/download-artifact@v4
         with:
           name: tfplan
+          path: terraform-project
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan

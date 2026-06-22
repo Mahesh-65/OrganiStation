@@ -57,6 +57,6 @@ variable "environment_configs" {
 
 locals {
   env = terraform.workspace
-  # Select config based on workspace, fallback to dev if workspace is default
-  config = lookup(var.environment_configs, local.env, var.environment_configs["dev"])
+  # Select config based on workspace, fallback to prod if workspace is default
+  config = lookup(var.environment_configs, local.env, var.environment_configs["prod"])
 }

@@ -1,0 +1,42 @@
+# ============================================================
+# Terraform .gitignore
+# ============================================================
+
+# Local state files (NEVER commit state to git)
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform.tfstate.lock.info
+
+# Terraform working directory
+.terraform/
+.terraform.lock.hcl
+
+# Variable files that may contain secrets
+# (dev/prod.tfvars are safe but override files may not be)
+*.auto.tfvars
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Sensitive outputs
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Local backend config overrides
+backend-config.local.hcl
+
+# Plan files (contain full state including secrets)
+*.tfplan
+tfplan
+
+# OS artifacts
+.DS_Store
+Thumbs.db
