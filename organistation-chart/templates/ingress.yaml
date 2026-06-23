@@ -1,107 +1,24 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: organistation-api-ingress
+  name: organistation-ingress
   namespace: {{ .Values.global.namespace }}
   annotations:
-    appgw.ingress.kubernetes.io/backend-protocol: "http"
+    kubernetes.io/ingress.class: azure/application-gateway
+    appgw.ingress.kubernetes.io/ssl-redirect: "false" # Set to true if you have a cert
     appgw.ingress.kubernetes.io/request-timeout: "60"
-    # Individual health probe paths can be handled via per-service annotations if needed,
-    # but for now we'll use the default or a common one.
 spec:
   ingressClassName: azure-application-gateway
   rules:
     - http:
         paths:
-          # --- AUTH SERVICE ---
-          - path: /api/auth
+          - path: /api
             pathType: Prefix
             backend:
               service:
-                name: auth
+                name: gateway
                 port:
-                  number: 80
-          - path: /api/users
-            pathType: Prefix
-            backend:
-              service:
-                name: auth
-                port:
-                  number: 80
-          - path: /api/roles
-            pathType: Prefix
-            backend:
-              service:
-                name: auth
-                port:
-                  number: 80
-
-          # --- NOTIFICATION SERVICE ---
-          - path: /api/notifications
-            pathType: Prefix
-            backend:
-              service:
-                name: notification
-                port:
-                  number: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: organistation-rewritten-ingress
-  namespace: {{ .Values.global.namespace }}
-  annotations:
-    appgw.ingress.kubernetes.io/backend-protocol: "http"
-    appgw.ingress.kubernetes.io/request-timeout: "60"
-    # This ingress handles services that need the '/api/service' prefix stripped
-    appgw.ingress.kubernetes.io/backend-path-prefix: "/api/"
-spec:
-  ingressClassName: azure-application-gateway
-  rules:
-    - http:
-        paths:
-          - path: /api/ai/
-            pathType: Prefix
-            backend:
-              service:
-                name: ai
-                port:
-                  number: 80
-          - path: /api/finance/
-            pathType: Prefix
-            backend:
-              service:
-                name: finance
-                port:
-                  number: 80
-          - path: /api/hr/
-            pathType: Prefix
-            backend:
-              service:
-                name: hr
-                port:
-                  number: 80
-          - path: /api/projects/
-            pathType: Prefix
-            backend:
-              service:
-                name: projects
-                port:
-                  number: 80
----
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: organistation-frontend-ingress
-  namespace: {{ .Values.global.namespace }}
-  annotations:
-    appgw.ingress.kubernetes.io/backend-protocol: "http"
-    appgw.ingress.kubernetes.io/request-timeout: "30"
-spec:
-  ingressClassName: azure-application-gateway
-  rules:
-    - http:
-        paths:
+                  number: 3000
           - path: /
             pathType: Prefix
             backend:
