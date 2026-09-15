@@ -4,235 +4,112 @@ applyTo: '**'
 # README
 
 ## Repository Overview
-OrganiStation is a microservices-based organizational management platform that integrates human resources, financial management, project tracking, and communication tools into a unified system.
+**OrganiStation** is a comprehensive organizational management platform built on a modern microservices architecture. The system provides integrated solutions for human resources, finance, project management, and document handling through a unified web interface.
 
-### What is OrganiStation?
+### Purpose
 
-- Employee records and HR operations
-- Financial budgets, expenses, and invoices
-- Project management with tasks and milestones
-- Document storage with AI-powered search
-- Internal notifications and communications
+OrganiStation serves as a centralized platform for managing organizational operations, offering:
 
-### System Architecture
+- **Human Resources Management**: Employee records, attendance tracking, and leave management
+- **Financial Operations**: Budget management, expense tracking, and invoice processing
+- **Project Management**: Project lifecycle management with tasks, milestones, and ticket tracking
+- **Document Management**: Secure document storage and retrieval with hash-based identification
+- **Authentication & Authorization**: Role-based access control with comprehensive permission management
+- **Notification System**: Multi-channel communication and alert management
 
-The platform consists of multiple microservices:
+### Architecture Scope
 
-- **Gateway**: API routing and frontend serving
-- **Auth Service**: User authentication and authorization
-- **HR Service**: Human resources management
-- **Finance Service**: Financial operations
-- **Notification Service**: Communication system
-- **Frontend**: React web application
+- **API Gateway**: Central routing and public asset management
+- **Frontend Service**: React-based user interface with authentication context
+- **Authentication Service**: User management, roles, and permissions
+- **HR Service**: Human resources and attendance functionality
+- **Finance Service**: Budget and financial operations
+- **Notification Service**: Communication and alert management
 
-### Technology Stack
-
-- **Backend**: Python-based microservices
-- **Frontend**: React application
-- **Database**: MongoDB
-- **Authentication**: JWT-based security
-- **Architecture**: RESTful APIs with gateway pattern
+the API Gateway pattern.
 
 ## Deployment Architecture
-### Service Layout
+OrganiStation uses a microservices deployment architecture with the following service topology:
 
-OrganiStation deploys as a distributed microservices system:
+### Core Services
 
-```
-Gateway Service (Entry Point)
-├── Frontend Assets (React SPA)
-└── API Routes (/api/*)
-    ├── /api/auth/* → Auth Service
-    ├── /api/hr/* → HR Service
-    ├── /api/finance/* → Finance Service
-    └── /api/notifications/* → Notification Service
-```
+- **Gateway**: API gateway for request routing and public asset serving
+- **Frontend**: React-based user interface application
+- **Auth Service**: Centralized authentication and authorization
+- **HR Service**: Human resources and attendance management
+- **Finance Service**: Budget and financial operations
+- **Notification Service**: System notifications and configuration
 
-### Required Infrastructure
+### Deployment Flow
 
-| Component | Purpose | Dependencies |
-|-----------|---------|-------------|
-| Auth Service | Authentication & authorization | MongoDB |
-| HR Service | Human resources management | MongoDB |
-| Finance Service | Budget & financial operations | MongoDB |
-| Notification Service | System notifications | MongoDB |
-| MongoDB | Data persistence | None |
+1. **Gateway Service**: Entry point for all client requests
+2. **Service Routing**: Gateway routes requests to appropriate microservices
+3. **Authentication**: Centralized through auth-service for all protected endpoints
+4. **Service Coordination**: Independent services communicate via RESTful APIs
 
-### Environment Variables
+### Environment Considerations
 
-```bash
-# Core Configuration
-PORT=<service-port>
-HOST=<bind-address>
-MONGODB_URI=<mongodb-connection-string>
-
-# Security
-JWT_SECRET=<jwt-signing-secret>
-INTERNAL_SERVICE_SECRET=<inter-service-auth>
-
-# Service Discovery
-FINANCE_SERVICE_URL=<finance-service-endpoint>
-```
-
-### Deployment Considerations
-
-- **Gateway First**: Deploy gateway service as the primary entry point
-- **Database**: Ensure MongoDB is accessible to all services
-- **Service Discovery**: Configure service URLs for inter-service communication
-- **Security**: Use consistent secrets across all services for internal authentication
+allowing for:
+- Scalable deployment based on service-specific requirements
+- Independent service updates
 
 ## Prerequisites
 Before setting up OrganiStation
 
-### Required Software
-
-### Development Tools
-
-etc.)
-
-### Environment Setup
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `PORT` | Application port number | Yes |
-| `INTERNAL_SERVICE_SECRET` | Secret for internal service communication | Yes |
-| `MONGODB_URI` | MongoDB connection string | Yes |
-| `JWT_SECRET` | Secret key for JWT token signing | Yes |
-| `FINANCE_SERVICE_URL` | URL for the finance service | Yes |
-| `HOST` | Application host address | Yes |
-
 ### System Requirements
+- Operating System: Windows, macOS, or Linux
+- Memory: Minimum 4GB RAM recommended
+- Storage: At least 1GB free disk space
+
+### Required Software
+- **Node.js**: Version 16.x or higher
+- **npm**: Version 8.x or higher (typically bundled with Node.js)
+- **Git**: For version control and repository cloning
+
+### Development Tools (Optional)
+- **Code Editor**: VS Code, WebStorm, or similar
+- **Browser**: Chrome, Firefox, or Safari for testing
+
+### Verification
+Verify your installations by running:
+
+> **Note**: Specific version requirements
 
 ## Installation
-### Prerequisites
-
-### Step-by-Step Installation
-
-1. **Clone the Repository**
-
-   ```bash
-   git clone <repository-url>
-   cd OrganiStation
-   ```
-
-3. **Environment Configuration**
-
-Create a `.env` file in the root directory and configure the following variables:
-
-   ```env
-   PORT=3000
-   HOST=localhost
-   MONGODB_URI=mongodb://localhost:27017/organistation
-   JWT_SECRET=your-jwt-secret-key
-   INTERNAL_SERVICE_SECRET=your-internal-service-secret
-   FINANCE_SERVICE_URL=http://localhost:3001
-   ```
-
-4. **Database Setup**
-
-Ensure MongoDB is running and accessible via the configured `MONGODB_URI`.
-
-5. **Start the Application**
-
-   ```bash
-   npm start
-   # or
-   yarn start
-   ```
-
-### Troubleshooting
+> **Note**: This section will be updated once deployment and configuration information becomes available in the project documentation.
 
 ## Configuration
+configuration files are identified in the codebase.
+
 ### Environment Variables
+*To be documented*
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `MONGODB_URI` | MongoDB connection string | Yes |
-| `JWT_SECRET` | Secret key for JWT token signing | Yes |
-| `INTERNAL_SERVICE_SECRET` | Secret for internal service communication | Yes |
-| `FINANCE_SERVICE_URL` | URL endpoint for the finance service | Yes |
+### Configuration Files
+*To be documented*
 
-### Configuration Setup
-
-1. Create a `.env` file in the project root:
-
-2. Update the `.env` file with your specific values:
-
-   ```env
-   PORT=3000
-   HOST=localhost
-   MONGODB_URI=mongodb://localhost:27017/organistation
-   JWT_SECRET=your-secure-jwt-secret
-   INTERNAL_SERVICE_SECRET=your-internal-service-secret
-   FINANCE_SERVICE_URL=http://localhost:3001
-   ```
+### Default Settings
+*To be documented*
 
 ## Development Environment
-### Local Setup
+### Local Development Setup
 
-1. **Clone the repository**
+debugging configuration
 
-   ```bash
-   git clone <repository-url>
-   cd OrganiStation
-   ```
-
-3. **Environment Configuration**
-   Create a `.env` file in the root directory with the following variables:
-
-   ```env
-   PORT=3000
-   HOST=localhost
-   MONGODB_URI=mongodb://localhost:27017/organistation
-   JWT_SECRET=your-jwt-secret-key
-   INTERNAL_SERVICE_SECRET=your-internal-service-secret
-   FINANCE_SERVICE_URL=http://localhost:3001
-   ```
-
-### Development Workflow
-
-1. **Start MongoDB**
-   Ensure MongoDB is running locally or update `MONGODB_URI` to point to your MongoDB instance.
-
-2. **Run the application**
-
-   ```bash
-   npm run dev
-   ```
-
-3. **Access the application**
-   - Main application: `http://localhost:3000`
-   - API endpoints available at the configured HOST and PORT
-
-### Environment Variables Reference
-
-| Variable | Description | Required |
-|----------|-------------|-----------|
-| `PORT` | Application port | Yes |
-| `HOST` | Application host | Yes |
-| `MONGODB_URI` | MongoDB connection string | Yes |
-| `JWT_SECRET` | Secret for JWT token signing | Yes |
-| `INTERNAL_SERVICE_SECRET` | Secret for internal service communication | Yes |
-| `FINANCE_SERVICE_URL` | URL for finance service integration | Yes |
-
-### Development Tips
+### Development Workflows
 
 ## Troubleshooting
-### Common Issues and Solutions
+### Common Issues
 
-#### Environment Variables Not Loading
-**Problem**: Application fails to start with missing environment variable errors.
+#### Installation Problems
+- **Issue**: Dependencies fail to install
+  - **Solution**: Ensure you have the correct Node.js version installed and try clearing npm cache with `npm cache clean --force`
 
-#### MongoDB Connection Issues
-**Problem**: Cannot connect to MongoDB database.
+#### Runtime Issues
+- **Issue**: Application fails to start
+  - **Solution**: Check that all required environment variables are set and ports are available
 
-permissions
+### Getting Help
 
-#### Port Already in Use
-**Problem**: Application fails to start with "port already in use" error.
+any dependent services
 
-#### Service Communication Failures
-**Problem**: Internal service calls fail or timeout.
-
-#### JWT Token Issues
-**Problem**: Authentication failures or invalid token errors.
+### Debug Mode

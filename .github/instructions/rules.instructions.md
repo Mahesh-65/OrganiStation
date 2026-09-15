@@ -4,134 +4,180 @@ applyTo: '**'
 # rules
 
 ## Naming Conventions
+### Python Code Standards
+
+**Functions, Methods**
+- Use snake_case for function
+
 ### API Endpoints
 
-**Resource-Based URLs**
-- Use plural nouns for resource collections: `/api/employees`, `/api/projects`
-- Use singular identifiers for specific resources: `/api/employees/{eid}`, `/api/tasks/{tid}`
-- Nest related resources appropriately: `/api/projects/{pid}/tasks`
+**URL Structure**
+- Use lowercase with hyphens for multi-word resources
+- Follow RESTful conventions with resource-based URLs
+- Example: `/api/employees`, `/api/employee-records`
 
 **HTTP Methods**
-- `GET` for retrieving resources
-- `POST` for creating new resources
-- `PUT` for updating existing resources
-- `DELETE` for removing resources
+- GET: Retrieve resources
+- POST: Create new resources
+- DELETE: Remove resources
+- PUT/PATCH: Update existing resources
+
+### File and Directory Names
+
+`models/`
 
 ### Health Check Endpoints
 
-**Standard Health Endpoints**
-- `/health` - Basic health status
-- `/api/health` - API-specific health check
+**Standard Endpoints**
+- `/health` - Basic application health status
 - `/ready` - Readiness probe for container orchestration
+- `/api/health` - API-specific health check
 
-### Path Parameters
-
-`{pid}` for project ID
+All health endpoints should use GET method and return appropriate HTTP status codes.
 
 ## Architecture Rules
 ### Layer Boundaries
 
-**Gateway Layer**
-- Must serve as the single entry point for all client requests
-- Responsible for routing API calls to appropriate microservices
-- Must serve frontend static assets
-- Cannot directly access service databases
+#### Service Isolation
+- Each service (auth-service, hr-service, finance-service, notification-service) must maintain strict boundaries
+- Services communicate only through well-defined API contracts
+- No direct database access between services
+- Shared data must be accessed through service APIs
 
-**Frontend Layer**
-- Must communicate exclusively through the gateway
-- Cannot make direct calls to backend services
-- Must handle authentication context management
-- Should maintain separation of concerns with React components
-
-**Service Layer**
-- Each microservice must maintain domain boundaries:
-  - `auth-service`: Authentication and authorization only
-  - `hr-service`: Human resources management only
-  - `finance-service`: Budget and financial operations only
-  - `notification-service`: Notification handling only
-- Services cannot directly communicate with each other
-- Must expose RESTful APIs for gateway consumption
+#### Gateway Layer
+- All external client requests must route through the API gateway
+- Gateway handles routing, load balancing, and cross-cutting concerns
+- Services must not expose direct external endpoints
 
 ### Import Rules
 
-**Frontend Dependencies**
-- Frontend must not import backend service code
-- API communication must use defined contracts only
-- Authentication context must be centrally managed
+#### Service Dependencies
+- Services must not import code directly from other services
+- Shared utilities should be extracted to common libraries
+- Database models are service-private and must not be imported across services
+
+#### Frontend Dependencies
+- Frontend may only communicate with services through the gateway
+- No direct service-to-frontend connections allowed
+- Authentication context must be managed centrally
 
 ### Forbidden Patterns
 
-**Direct Service Communication**
-- ❌ Service-to-service direct API calls
-- ❌ Shared databases between services
-- ❌ Frontend bypassing gateway for service access
+#### Cross-Service Database Access
+- ❌ Direct database connections between services
+- ❌ Shared database schemas across service boundaries
+- ❌ Foreign key relationships spanning service databases
 
-**Tight Coupling**
-- ❌ Services sharing business logic implementations
-- ❌ Cross-domain data access (e.g., HR service accessing finance data directly)
-- ❌ Gateway implementing business logic beyond routing
+#### Tight Coupling
+- ❌ Synchronous service-to-service calls for non-critical operations
+- ❌ Shared mutable state between services
+- ❌ Service-specific logic in the gateway layer
+
+#### Security Violations
+- ❌ Services bypassing authentication through the auth-service
+- ❌ Direct client access to internal service endpoints
+- ❌ Hardcoded credentials or tokens in service code
+
+### Compliance Requirements
+
+- All services must implement health check endpoints
+- Services must use standardized logging, environment-specific
+
+## Security Rules
+### Input Validation
+
+### Authentication Implementation
+
+Flask-Login
+
+### OWASP Compliance
+
+### Secret Management Rules
+
+## Async & Concurrency
+### Required Async Patterns
+
+- Use `async`/`await` for I/O operations (file
+
+### Forbidden Sync Patterns
+
+### Best Practices
+
+## Error Handling
+### Required Patterns
+
+### Forbidden Patterns
+
+### Exception Guidelines
 
 ## Database Access
 ### ORM Usage
 
-- **Prefer ORM methods** for standard CRUD operations to maintain consistency and leverage built-in security features
-- **Use type-safe queries** when available in your ORM to catch errors at compile time
-- **Implement proper error handling** for database operations with appropriate logging
-- **Follow the repository pattern** to abstract database access and improve testability
+- **Prefer ORM over raw SQL**: Use the framework's ORM (Object-Relational Mapping) for standard database operations
+- **Model-based queries**: Leverage model classes for type-safe database interactions
+- **Relationship handling**: Use ORM relationship definitions for joins and foreign key operations
 
 ### Raw SQL Guidelines
 
-### Query Performance
-
-- **Index frequently queried columns** based on service-specific access patterns
-- **Use database query analysis tools** to identify slow queries
-
 ### Migration Conventions
 
-complete change
-- **Document breaking changes** in migration comments, team communications
-- **Coordinate cross-service migrations** when changes affect multiple microservices
+### Service-Specific Database Rules
 
-### Connection Management
+- **auth-service**: Handle user, role, and permission models with appropriate indexing
+- **hr-service**: Implement attendance tracking with proper timestamp handling
+- **finance-service**: Ensure decimal precision for monetary calculations
+- **notification-service**: Optimize configuration queries for performance
 
 ## Testing Standards
-### Test File Naming
+### Test File Organization
 
-#### Unit Tests
-- Format: `{component}.test.{ext}`
-- Examples: `employee.test.js`, `project.service.test.ts`
+### Naming Rules
 
-#### Integration Tests
-- Format: `{feature}.integration.test.{ext}`
-- Examples: `employee-api.integration.test.js`, `database.integration.test.ts`
+#### Test Files
+- **MUST** start with `test_`
+- **MUST** end with `.py`
+- **MUST** mirror source code structure
 
-#### End-to-End Tests
-- Format: `{workflow}.e2e.test.{ext}`
-- Examples: `employee-management.e2e.test.js`, `project-creation.e2e.test.js`
+#### Test Functions
+- **MUST** start with `test_`
+- **MUST** use descriptive names indicating what is being tested
+- **MUST** include expected outcome in name
+- **SHOULD** use snake_case
 
-### Test Function Naming
+#### Test Classes
+- **MUST** start with `Test`
+- **MUST** use PascalCase
+- **SHOULD** group related test methods
 
-#### Descriptive Test Names
-- Use clear, descriptive names that explain what is being tested
-- Format: `should_{expected_behavior}_when_{condition}`
-- Examples:
-  - `should_return_employee_data_when_valid_id_provided`
-  - `should_throw_error_when_employee_not_found`
-  - `should_create_project_when_valid_data_submitted`
+### Test Quality Rules
 
-#### Test Suite Organization
-- Group related tests using `describe()` blocks
-- Use nested `describe()` blocks for different scenarios
-- Example structure:
+#### Test Independence
+- Tests **MUST NOT** depend on execution order
+- Tests **MUST** clean up their own state
+- Tests **MUST NOT** share mutable state
 
-### Test Data Management
+#### Assertion Rules
+- **MUST** have at least one assertion per test
+- **SHOULD** use descriptive assertion messages
+- **MUST** test one logical concept per test function
 
-#### Test Data Naming
-- Use descriptive variable names for test data
-- Prefix with `mock`, `stub`, or `fixture` as appropriate
-- Examples: `mockEmployeeData`, `stubProjectResponse`, `validUserFixture`
+#### API Testing Requirements
+- **MUST** test all HTTP methods (GET, POST, DELETE)
+- **MUST** test both success and error scenarios
+- **MUST** validate response status codes
+- **MUST** validate response data structure
 
-#### Test Database
-- Use separate test database with `_test` suffix
-- Example: `organistation_test`
-- Clean up test data after each test run
+### Coverage Requirements
+
+`/health`
+
+## Anti-Patterns (Never Do)
+### Code Organization
+
+Java
+
+### Development Practices
+
+passwords
+
+### Documentation

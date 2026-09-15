@@ -4,212 +4,213 @@ applyTo: '**'
 # standards
 
 ## API Standards
-### RESTful Design Principles
+### REST API Design
 
-All APIs follow RESTful design patterns with consistent resource naming and HTTP method usage:
+**Resource Naming**
+- Use plural nouns for resource collections: `/api/employees`, `/api/projects`
+- Use singular identifiers for specific resources: `/api/employees/{eid}`, `/api/projects/{pid}`
+- Maintain consistent parameter naming across services (e.g., `eid` for employee ID, `pid` for project ID)
 
-- **GET** - Retrieve resources or collections
-- **POST** - Create new resources
-- **PUT** - Update existing resources
-- **DELETE** - Remove resources
+**HTTP Methods**
+- `GET` for retrieving resources and collections
+- `POST` for creating new resources and operations
+- `PUT` for updating existing resources
+- `DELETE` for removing resources
 
-### Resource Identification
+**Response Schemas**
+- All API responses must follow standardized schema patterns
+- Use configuration classes for response validation:
+  - `RoleResponse.Config` for role data
+  - `UserResponse.Config` for user data
+  - `PermissionResponse.Config` for permission data
 
-Resources use consistent identifier patterns:
+**Authentication & Authorization**
+- JWT token-based authentication with standardized `TokenPayload` structure
+- Token payload includes: `exp`, `permissions`, `role`, and `sub` fields
+- Consistent authentication endpoints: `/login`, `/logout`, `/refresh`, `/register`
 
-| Resource | Identifier | Example |
-|----------|------------|----------|
-| Documents | `doc_hash` | `/api/documents/{doc_hash}` |
-| Employees | `eid` | `/api/employees/{eid}` |
-| Expenses | `eid` | `/api/expenses/{eid}` |
-| Invoices | `iid` | `/api/invoices/{iid}` |
-| Projects | `pid` | `/api/projects/{pid}` |
-| Tickets | `tid` | `/api/tickets/{tid}` |
-| Users | `user_id` | `/{user_id}` |
+**Error Handling**
+- Standardized error response format across all services
+- Consistent HTTP status codes for similar operations
+- Proper error messages for client consumption
 
-### Response Schema Standards
-
-All services implement standardized response schemas:
-
-- **UserResponse** - User entity responses with configuration
-- **RoleResponse** - Role entity responses with permissions
-- **PermissionResponse** - Permission entity responses
-
-### Health Check Endpoints
-
-All services must implement health check endpoints:
-
-```
-GET /api/{service}/health
-```
-
-### Error Handling
-
-APIs return consistent HTTP status codes:
+**Service Integration**
+- Health check endpoints: `/api/auth/health`
+- Consistent service configuration through `Settings` classes
+- Standardized notification patterns for cross-service communication
 
 ## Testing Standards
 ### Test Coverage Requirements
 
+- **Minimum Coverage**: 80% code coverage for all Python modules
+- **Critical Path Coverage**: 100% coverage for API endpoints
+
 ### Required Test Types
 
-#### API Testing
-- All REST endpoints must have corresponding test cases
-- Test both success and error scenarios
-- Validate HTTP status codes, response structure, and data integrity
-- Include tests for edge cases and boundary conditions
+#### Unit Tests
+- **Scope**: Individual functions, methods, and classes
+- **Framework**: pytest (primary testing framework for Python)
+- **Isolation**: Tests must be independent and not rely on external dependencies
+- **Mocking**: Use unittest.mock for external service dependencies
 
-#### Database Testing
-- Test CRUD operations for all entities
-- Validate data constraints and relationships
-- Test transaction rollback scenarios
-- Include performance tests for complex queries
+#### Integration Tests
+- **API Endpoints**: All REST endpoints (GET, POST, DELETE) must have integration tests
+- **Health Checks**: Dedicated tests for health monitoring endpoints (`/api/health`, `/health`, `/ready`)
+- **Database Integration**: Tests for data persistence and retrieval operations
 
-#### Security Testing
-- Authentication and authorization tests
-- Input validation and sanitization tests
-- SQL injection and XSS prevention tests
+#### End-to-End Tests
+- **User Workflows**: Complete user journeys through the application
+- **API Workflows**: Full request-response cycles for critical business processes
 
-### Test Organization
+### Test Naming Conventions
 
-#### Directory Structure
+#### Test Files
+- **Pattern**: `test_<module_name>.py`
+- **Location**: Mirror source code structure in `tests/` directory
+- **Example**: `tests/test_employee_service.py` for `src/employee_service.py`
 
-#### Test Categories
-- **Unit Tests**: Test individual functions and methods in isolation
-- **Integration Tests**: Test component interactions and API endpoints
-- **System Tests**: Test complete workflows and user scenarios
+#### Test Functions
+- **Unit Tests**: `test_<function_name>_<scenario>()`
+- **Integration Tests**: `test_<endpoint>_<http_method>_<expected_outcome>()`
+- **Examples**:
+  - `test_create_employee_success()`
+  - `test_get_employees_returns_list()`
+  - `test_delete_employee_invalid_id_returns_404()`
 
-### Performance Testing
-- Load testing for API endpoints under expected traffic
-- Database performance testing for complex queries
-- Memory usage and resource consumption monitoring
+#### Test Classes
+- **Pattern**: `Test<ClassName>`
+- **Example**: `TestEmployeeService`, `TestHealthEndpoints`
+
+### Test Data Management
 
 ## API Standards
 ### RESTful Design Principles
 
-The OrganiStation API follows REST architectural conventions with proper HTTP method usage and resource-based URL structures:
+The OrganiStation API follows RESTful design principles with consistent HTTP method usage and resource-based URL patterns:
 
-- **GET** - Retrieve resources (collections and individual items)
-- **POST** - Create new resources
-- **PUT** - Update existing resources
-- **DELETE** - Remove resources
+- **GET**: Retrieve resources (collections and individual items)
+- **POST**: Create new resources
+- **PUT**: Update existing resources
+- **DELETE**: Remove resources
 
 ### URL Structure
 
-All API endpoints follow a consistent resource-based URL pattern:
+APIs follow a hierarchical resource-based structure:
 
-```
-/api/{resource}
-/api/{resource}/{id}
-/api/{resource}/{id}/{sub-resource}
-```
-
-**Examples:**
-- `/api/employees` - Employee collection
-- `/api/employees/{eid}` - Individual employee
-- `/api/employees/{eid}/attendance` - Employee sub-resource
-- `/api/projects/{pid}/tasks` - Nested resource operations
-
-### HTTP Methods and Operations
-
-| Method | Purpose | Example Endpoints |
-|--------|---------|------------------|
-| GET | Retrieve data | `/api/employees`, `/api/projects/{pid}` |
-| POST | Create resources | `/api/employees`, `/api/projects/{pid}/tasks` |
-| PUT | Update resources | `/api/employees/{eid}`, `/api/tasks/{tid}` |
-| DELETE | Remove resources | `/api/employees/{eid}`, `/api/projects/{pid}` |
+#### Examples:
+- `GET /api/employees` - List all employees
+- `GET /api/employees/{eid}` - Get specific employee
+- `GET /api/employees/{eid}/attendance` - Get employee attendance records
+- `POST /api/employees` - Create new employee
+- `PUT /api/employees/{eid}` - Update employee
+- `DELETE /api/employees/{eid}` - Delete employee
 
 ### Resource Naming Conventions
 
-`{pid}` for project ID, `{tid}` for task/ticket ID
+- Use plural nouns for resource collections (`/employees`, `/projects`, `/tickets`)
+- Use lowercase with hyphens for multi-word resources
+- Path parameters use descriptive names (`{eid}` for employee ID, `{pid}` for project ID)
 
-### Health Check Standards
+### HTTP Methods by Resource Type
 
-Multiple health check endpoints are provided for comprehensive system monitoring:
+| Resource | GET | POST | PUT | DELETE |
+|----------|-----|------|-----|--------|
+| Employees | ✓ List/Get | ✓ Create | ✓ Update | ✓ Delete |
+| Projects | ✓ List/Get | ✓ Create | ✓ Update | ✓ Delete |
+| Documents | ✓ List/Get | ✓ Upload | - | ✓ Delete |
+| Tickets | ✓ List/Get | ✓ Create | ✓ Update | ✓ Delete |
+| Expenses | ✓ List/Get | ✓ Create | ✓ Update | ✓ Delete |
+| Invoices | ✓ List/Get | ✓ Create | ✓ Update | ✓ Delete |
 
-- `/api/health` - General API health status
-- `/api/auth/health` - Authentication service health
-- `/health` - System-level health check
-- `/ready` - Readiness probe endpoint
+### Health Check Endpoints
+
+Multiple health monitoring endpoints are implemented for system status verification:
+
+- `GET /health` - Basic health check
+- `GET /ready` - Readiness probe
+- `GET /api/health` - API-specific health status
+- `GET /api/auth/health` - Authentication service health
+
+### Special Endpoints
+
+#### System Operations
+- `GET /api/summary` - System summary information
+- `POST /api/reset` - Database reset (development/testing)
+- `POST /refresh` - System refresh operation
+
+#### Document Operations
+- `GET /api/documents/view/{doc_hash}` - Serve original document files
+- `POST /api/query` - Query documents
+- `POST /ingest` - Document ingestion
+
+#### Authentication & User Management
+- `POST /login` - User authentication
+- `POST /logout` - User logout
+- `POST /register` - User registration
+- `POST /change-password` - Password change
+
+#### Notifications
+- `POST /notifications/broadcast` - Broadcast to all users
+- `POST /notifications/user/{userId}` - User-specific notifications
+- `POST /notifications/send-email` - Email notifications
 
 ### API Versioning
-
-### Response Standards
-
-- Consistent JSON response format
-- Appropriate HTTP status codes
-- Resource-specific endpoints for different operations (view, list, create, update, delete)
-- Document viewing through dedicated endpoints: `/api/documents/view/{doc_hash}`
 
 ## Engineering Standards
 ### Code Review Standards
 
-#### API Design Standards
-- **RESTful API Design**: All APIs must follow REST conventions with proper HTTP methods and resource-based URLs
-  - Use appropriate HTTP methods: GET for retrieval, POST for creation, PUT for updates, DELETE for removal
-  - Implement resource-based URL patterns (e.g., `/api/employees`, `/api/projects/{pid}/tasks`)
-  - Maintain consistent endpoint naming conventions
-
-#### Monitoring and Health Checks
-- **Health Check Implementation**: All services must provide comprehensive health check endpoints
-  - Primary health endpoint: `/api/health`
-  - System health endpoint: `/health`
-  - Readiness probe endpoint: `/ready`
-  - Health checks should verify service dependencies and system state
+architectural consistency
+- Ensure proper error handling
 
 ### Documentation Standards
 
-#### API Documentation
-- All API endpoints must be documented with:
-  - Request/response schemas
-  - HTTP status codes
-  - Error handling patterns
-  - Authentication requirements
-
-#### Code Documentation
-- Functions and classes must include clear docstrings
-- Complex business logic requires inline comments
-- README files must be maintained for each service/module
+- Maintain clear and comprehensive API documentation
+- Document all endpoints with proper HTTP method usage
+- Include health check endpoint documentation for monitoring purposes
 
 ### Development Standards
 
-#### Code Quality
-- Follow language-specific style guides
-- Implement proper error handling and logging
-- Use meaningful variable and function names
-- Maintain consistent code formatting
+#### Programming Language
+- **Primary Language**: Python
+- Follow Python PEP standards and best practices
+- Maintain consistent coding style across the codebase
 
-#### Testing Requirements
-- Unit tests for all business logic
-- Integration tests for API endpoints
-- Health check endpoint validation
-- Minimum code coverage thresholds must be maintained
+#### API Design Standards
+- **RESTful Design**: Use consistent HTTP methods with resource-based URLs
+  - `GET` for retrieving resources
+  - `POST` for creating new resources
+  - `DELETE` for removing resources
+- **Resource Naming**: Use clear, descriptive resource paths (e.g., `/api/employees`)
+- **HTTP Status Codes**: Return appropriate status codes for different operations
+
+#### Health Monitoring Standards
+- Implement multiple health check endpoints for comprehensive system monitoring:
+  - `/api/health` - API-specific health status
+  - `/health` - General application health
+  - `/ready` - Readiness probe for deployment orchestration
+- Health endpoints should return consistent response formats
+- Include relevant system status information in health responses
+
+#### Quality Assurance
+- Implement proper error handling and validation
+- Follow consistent patterns for request/response handling
+- Maintain backward compatibility when making API changes
+- Use appropriate logging levels and structured logging formats
 
 ## Code Quality Standards
-### API Design Standards
+### Programming Language Standards
 
-#### RESTful API Conventions
-The codebase follows REST architectural principles with proper HTTP method usage:
+### API Standards
 
-- **GET** requests for data retrieval (e.g., `/api/employees`)
-- **POST** requests for resource creation (e.g., `/api/employees`, `/api/projects/{pid}/tasks`)
-- **PUT** requests for resource updates (e.g., `/api/tasks/{tid}`)
-- **DELETE** requests for resource removal (e.g., `/api/employees/{eid}`)
+- **RESTful Design**: Implement consistent HTTP methods with resource-based URLs
+  - GET for data retrieval
+  - POST for resource creation
+  - DELETE for resource removal
+- **Health Monitoring**: Implement standardized health check endpoints
+  - `/api/health` - Application health status
+  - `/health` - Basic health check
+  - `/ready` - Readiness probe for deployment
 
-#### Resource-Based URL Structure
-APIs use clear, hierarchical resource paths:
-- Employee management: `/api/employees`
-- Task management within projects: `/api/projects/{pid}/tasks`
-- Individual task operations: `/api/tasks/{tid}`
+### Code Quality Metrics
 
-### Monitoring and Health Checks
-
-#### Health Check Implementation
-Multiple health check endpoints are implemented for comprehensive system monitoring:
-
-| Endpoint | Purpose |
-|----------|----------|
-| `/api/health` | API service health status |
-| `/health` | General application health |
-| `/ready` | Readiness probe for deployment |
-
-These endpoints enable proper monitoring
+### Quality Gates

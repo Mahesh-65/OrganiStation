@@ -1,62 +1,431 @@
 {
-  "version": 1,
-  "generated_at": "2026-09-15T06:40:40.350067+00:00",
-  "generation_type": "flat_generation",
-  "project": {
-    "id": "9c566995-3384-465f-b17f-f099c4cdf024",
-    "name": "organistation",
-    "description": "",
-    "repository_count": 1
-  },
-  "knowledgeSources": [
-    {
-      "id": "organistation",
-      "type": "git",
-      "location": [
-        "https://github.com/Mahesh-65/OrganiStation.git"
+  "assets": {
+    "rules.md": {
+      "tags": [
+        "OrganiStation"
       ],
-      "branch": "main",
-      "include": [
-        "**/*.md"
+      "status": "active",
+      "version": 1,
+      "size_bytes": 4847,
+      "last_updated": "2026-09-15T07:22:32.568439+00:00",
+      "source_commit": "initial"
+    },
+    "policies.md": {
+      "tags": [
+        "OrganiStation"
+      ],
+      "status": "active",
+      "version": 1,
+      "size_bytes": 1582,
+      "last_updated": "2026-09-15T07:20:21.212142+00:00",
+      "source_commit": "initial"
+    },
+    "standards.md": {
+      "tags": [
+        "OrganiStation"
+      ],
+      "status": "active",
+      "version": 1,
+      "size_bytes": 7712,
+      "last_updated": "2026-09-15T07:22:32.588127+00:00",
+      "source_commit": "initial"
+    },
+    "instruction.md": {
+      "tags": [
+        "OrganiStation"
+      ],
+      "status": "active",
+      "version": 1,
+      "size_bytes": 16864,
+      "last_updated": "2026-09-15T07:22:32.484867+00:00",
+      "source_commit": "initial"
+    },
+    "architecture.md": {
+      "tags": [
+        "OrganiStation"
+      ],
+      "status": "active",
+      "version": 1,
+      "size_bytes": 32573,
+      "last_updated": "2026-09-15T07:22:32.506839+00:00",
+      "source_commit": "initial"
+    },
+    "setup/README.md": {
+      "tags": [
+        "OrganiStation"
+      ],
+      "status": "active",
+      "version": 1,
+      "size_bytes": 3918,
+      "last_updated": "2026-09-15T07:20:21.212142+00:00",
+      "source_commit": "initial"
+    },
+    "OrganiStation_context.md": {
+      "tags": [
+        "OrganiStation"
+      ],
+      "status": "active",
+      "version": 1,
+      "size_bytes": 19849,
+      "last_updated": "2026-09-15T07:20:21.212142+00:00",
+      "source_commit": "initial"
+    }
+  },
+  "history": {
+    "last_release": "2026-09-15",
+    "current_version": 1,
+    "previous_version": 0
+  },
+  "project": {
+    "name": "AI-Generated Context",
+    "description": "Session-based knowledge repository",
+    "last_updated": "2026-09-15T07:22:33.093984+00:00"
+  },
+  "version": 1,
+  "sessions": {
+    "rules": {
+      "count": 51,
+      "titles": [
+        "rules",
+        "Naming Conventions",
+        "Python Code Standards",
+        "API Endpoints",
+        "File and Directory Names",
+        "Health Check Endpoints",
+        "Architecture Rules",
+        "Layer Boundaries",
+        "Service Isolation",
+        "Gateway Layer",
+        "Import Rules",
+        "Service Dependencies",
+        "Frontend Dependencies",
+        "Forbidden Patterns",
+        "Cross-Service Database Access",
+        "Tight Coupling",
+        "Security Violations",
+        "Compliance Requirements",
+        "Security Rules",
+        "Input Validation",
+        "Authentication Implementation",
+        "OWASP Compliance",
+        "Secret Management Rules",
+        "Async & Concurrency",
+        "Required Async Patterns",
+        "Forbidden Sync Patterns",
+        "Best Practices",
+        "Error Handling",
+        "Required Patterns",
+        "Forbidden Patterns",
+        "Exception Guidelines",
+        "Database Access",
+        "ORM Usage",
+        "Raw SQL Guidelines",
+        "Migration Conventions",
+        "Service-Specific Database Rules",
+        "Testing Standards",
+        "Test File Organization",
+        "Naming Rules",
+        "Test Files",
+        "Test Functions",
+        "Test Classes",
+        "Test Quality Rules",
+        "Test Independence",
+        "Assertion Rules",
+        "API Testing Requirements",
+        "Coverage Requirements",
+        "Anti-Patterns (Never Do)",
+        "Code Organization",
+        "Development Practices",
+        "Documentation"
+      ]
+    },
+    "policies": {
+      "count": 11,
+      "titles": [
+        "policies",
+        "Security Architecture",
+        "Authentication and Authorization",
+        "Service-Level Security",
+        "Access Control Framework",
+        "Security Boundaries",
+        "Security Policies",
+        "Authentication Requirements",
+        "Data Protection",
+        "Secret Management",
+        "Compliance Framework"
+      ]
+    },
+    "standards": {
+      "count": 40,
+      "titles": [
+        "standards",
+        "API Standards",
+        "REST API Design",
+        "Testing Standards",
+        "Test Coverage Requirements",
+        "Required Test Types",
+        "Unit Tests",
+        "Integration Tests",
+        "End-to-End Tests",
+        "Test Naming Conventions",
+        "Test Files",
+        "Test Functions",
+        "Test Classes",
+        "Test Data Management",
+        "API Standards",
+        "RESTful Design Principles",
+        "URL Structure",
+        "Examples:",
+        "Resource Naming Conventions",
+        "HTTP Methods by Resource Type",
+        "Health Check Endpoints",
+        "Special Endpoints",
+        "System Operations",
+        "Document Operations",
+        "Authentication & User Management",
+        "Notifications",
+        "API Versioning",
+        "Engineering Standards",
+        "Code Review Standards",
+        "Documentation Standards",
+        "Development Standards",
+        "Programming Language",
+        "API Design Standards",
+        "Health Monitoring Standards",
+        "Quality Assurance",
+        "Code Quality Standards",
+        "Programming Language Standards",
+        "API Standards",
+        "Code Quality Metrics",
+        "Quality Gates"
+      ]
+    },
+    "instruction": {
+      "count": 8,
+      "titles": [
+        "Instructions \u2014 OrganiStation",
+        "MANDATORY \u2014 APPLIES TO ALL PROMPTS \u2014 FULL PROJECT SCOPE",
+        "\ud83d\udccb Document Information",
+        "\ud83d\udcda Repository Context Documents",
+        "\u2699\ufe0f Execution Instructions",
+        "AI Team SDLC Workflow Trigger",
+        "\ud83d\udcdc Repository-Specific Instructions",
+        "\ud83d\udca1 Quick Reference"
+      ]
+    },
+    "architecture": {
+      "count": 103,
+      "titles": [
+        "architecture",
+        "Repository Overview",
+        "System Purpose",
+        "Architectural Approach",
+        "Service Topology",
+        "Architecture Overview",
+        "System Architecture",
+        "Core Services",
+        "API Gateway",
+        "Authentication Service (`auth-service`)",
+        "Human Resources Service (`hr-service`)",
+        "Finance Service (`finance-service`)",
+        "Project Management Service (`project-management-service`)",
+        "Notification Service (`notification-service`)",
+        "RAG Pipeline Service",
+        "Design Philosophy",
+        "Domain-Driven Design",
+        "RESTful API Design",
+        "Microservices Patterns",
+        "Data Architecture",
+        "Entity Relationships",
+        "Identification Patterns",
+        "High-Level Design",
+        "System Layers",
+        "Core Subsystems",
+        "Authentication & Authorization Service",
+        "Human Resources Service",
+        "Finance Service",
+        "Project Management Service",
+        "Document Service",
+        "Notification Service",
+        "Service Boundaries",
+        "Cross-Cutting Concerns",
+        "Component Design",
+        "Core Business Components",
+        "Data Models",
+        "Service Architecture Components",
+        "Microservices",
+        "Component Interactions",
+        "Entity Relationships",
+        "Service Dependencies",
+        "Frontend Components",
+        "React Application Structure",
+        "Specialized Components",
+        "RAG Pipeline",
+        "Configuration Management",
+        "API Handler Components",
+        "Resource Management Handlers",
+        "Authentication Handlers",
+        "Notification Handlers",
+        "Runtime Design",
+        "Request Lifecycle",
+        "Execution Flows",
+        "Authentication Flow",
+        "Resource Management Flow",
+        "Document Processing Flow",
+        "Concurrency Model",
+        "Service-Level Concurrency",
+        "Gateway Concurrency",
+        "Data Access Patterns",
+        "Error Handling",
+        "Integration Design",
+        "API Gateway Pattern",
+        "RESTful API Design",
+        "Core Resource Endpoints",
+        "Service-Specific Integrations",
+        "Inter-Service Communication",
+        "Document Integration",
+        "Frontend Integration",
+        "Data Flow Design",
+        "Core Data Flow Patterns",
+        "1. Request-Response Flow",
+        "2. Entity-Specific Data Flows",
+        "3. Document Processing Flow",
+        "4. Authentication & Authorization Flow",
+        "5. Notification Flow",
+        "6. Leave Request Processing Flow",
+        "7. Data Consistency Patterns",
+        "8. Error Handling & Recovery",
+        "Security Architecture",
+        "Authentication Flow",
+        "Security Components",
+        "API Gateway Security Layer",
+        "Authentication Service",
+        "Service Security Boundaries",
+        "Document Security",
+        "Deployment Architecture",
+        "Service Topology",
+        "Deployment Components",
+        "Architectural Patterns",
+        "Service Communication",
+        "Dependency Analysis",
+        "Internal Dependencies",
+        "Service-to-Service Dependencies",
+        "API Service Dependencies",
+        "External Dependencies",
+        "Technology Stack Dependencies",
+        "Rationale for Dependencies",
+        "API Architecture",
+        "Service API Structure",
+        "API Endpoint Categories",
+        "Data Models",
+        "Integration Patterns"
+      ]
+    },
+    "setup_readme": {
+      "count": 27,
+      "titles": [
+        "README",
+        "Repository Overview",
+        "Purpose",
+        "Architecture Scope",
+        "Deployment Architecture",
+        "Core Services",
+        "Deployment Flow",
+        "Environment Considerations",
+        "Prerequisites",
+        "System Requirements",
+        "Required Software",
+        "Development Tools (Optional)",
+        "Verification",
+        "Installation",
+        "Configuration",
+        "Environment Variables",
+        "Configuration Files",
+        "Default Settings",
+        "Development Environment",
+        "Local Development Setup",
+        "Development Workflows",
+        "Troubleshooting",
+        "Common Issues",
+        "Installation Problems",
+        "Runtime Issues",
+        "Getting Help",
+        "Debug Mode"
+      ]
+    },
+    "organistation_context": {
+      "count": 63,
+      "titles": [
+        "context",
+        "System Overview",
+        "Core Purpose",
+        "System Architecture",
+        "Key Features",
+        "Domain Model",
+        "Core Business Entities",
+        "Human Resources Domain",
+        "Project Management Domain",
+        "Financial Management Domain",
+        "Document Management Domain",
+        "Authentication & Authorization Domain",
+        "Entity Relationships",
+        "Primary Associations",
+        "Domain Responsibilities",
+        "Employee Management",
+        "Project Coordination",
+        "Financial Operations",
+        "Document Processing",
+        "Service Integration",
+        "API Inventory",
+        "Document Management",
+        "Employee Management",
+        "Project Management",
+        "Financial Management",
+        "Ticket Management",
+        "Authentication & Authorization",
+        "Notifications",
+        "System Operations",
+        "Leave Management",
+        "Data Flows",
+        "Request Processing Flows",
+        "Client-Gateway-Service Flow",
+        "Authentication Flow",
+        "Employee Management Flow",
+        "Project Management Flow",
+        "Document Processing Flow",
+        "Notification Flow",
+        "Financial Data Flow",
+        "System Health and Monitoring",
+        "External Integrations",
+        "Database Integration",
+        "API Gateway Integration",
+        "Service Configuration",
+        "Document Management Integration",
+        "Notification System Integration",
+        "Health Monitoring",
+        "User Journeys",
+        "End User Journeys",
+        "Employee Self-Service Journey",
+        "Manager Workflow Journey",
+        "Finance Team Journey",
+        "IT Support Journey",
+        "Developer Journeys",
+        "API Integration Journey",
+        "Frontend Development Journey",
+        "Backend Service Development Journey",
+        "DevOps Journey",
+        "Deployment Notes",
+        "Service Topology",
+        "Runtime Components",
+        "Deployment Considerations",
+        "Network Flow"
       ]
     }
-  ],
-  "repositories": {
-    "OrganiStation": {
-      "url": "https://github.com/Mahesh-65/OrganiStation",
-      "branch": "main",
-      "language": "python",
-      "status": "ready"
-    }
-  },
-  "artifacts": {
-    ".kiro/settings/mcp.json": {
-      "type": "json_configuration",
-      "generatedAt": "2026-09-15T06:40:40.350067+00:00",
-      "source": "migration"
-    },
-    ".kiro/agents/story_eval_agent.md": {
-      "type": "markdown_document",
-      "generatedAt": "2026-09-15T06:40:40.350067+00:00",
-      "source": "migration"
-    }
-  },
-  "agents": {
-    "story-eval": {
-      "path": ".kiro/agents/story_eval_agent.md",
-      "type": "advisory",
-      "description": "Advisory Jira-story validator"
-    }
-  },
-  "mcp": {
-    "config_path": ".kiro/settings/mcp.json",
-    "servers": [
-      "jira"
-    ]
   },
   "statistics": {
-    "total_knowledge_sources": 1,
-    "total_repositories": 1,
-    "total_artifacts": 2
-  }
+    "total_files": 7,
+    "total_sessions": 303,
+    "total_size_bytes": 87345
+  },
+  "generated_at": "2026-09-15T07:22:33.093984+00:00"
 }

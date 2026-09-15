@@ -4,180 +4,131 @@ applyTo: '**'
 # architecture
 
 ## Repository Overview
-OrganiStation is a comprehensive organizational management platform built using a microservices architecture. The system provides integrated solutions for human resources, financial management, project tracking, and organizational communication through a unified web interface.
+OrganiStation is a multi-service organizational management platform designed using microservices architecture principles. The system provides comprehensive business management capabilities through a distributed service topology.
 
-### Purpose
+### System Purpose
 
-The platform serves as a centralized hub for organizational operations, offering:
+- **Operational Management**: Employee lifecycle, attendance, and HR processes
+- **Financial Control**: Budget planning, expense management, and invoice processing
+- **Project Coordination**: Task management, milestone tracking, and project oversight
+- **Document Handling**: Secure storage and retrieval with hash-based identification
+- **Access Control**: Role-based authentication and granular permission management
 
-- **Human Resources Management**: Employee records, attendance tracking, leave management, and job postings
-- **Financial Operations**: Budget management, expense tracking, and invoice processing
-- **Project Management**: Project lifecycle management with tasks, milestones, and ticket tracking
-- **Document Management**: Centralized document storage with AI-powered query capabilities
-- **Communication**: Integrated notification system for organizational updates
+### Architectural Approach
 
-### Architecture Approach
+OrganiStation implements key architectural patterns:
 
-OrganiStation implements a microservices architecture pattern with the following key characteristics:
+- **Microservices Architecture**: Independent, loosely-coupled services
+- **API Gateway Pattern**: Centralized routing and request management
+- **RESTful API Design**: Standardized HTTP-based service communication
 
-- **API Gateway Pattern**: Centralized routing and frontend asset serving
-- **Domain-Driven Design**: Separate services for distinct business domains (auth, hr, finance, notifications)
-- **RESTful APIs**: Standardized HTTP-based communication between services
-- **React Frontend**: Modern web interface with authentication context management
+### Service Topology
 
-### Core Components
+The system comprises six primary services:
 
-- **Gateway Service**: Routes API calls and serves frontend assets
-- **Authentication Service**: User management, authentication, and authorization
-- **HR Service**: Human resources and employee management
-- **Finance Service**: Budget and financial operations
-- **Notification Service**: Communication and alert management
-- **Frontend Application**: React-based user interface
+1. **Gateway Service**: API routing and static asset management
+2. **Frontend Service**: React application with authentication integration
+3. **Auth Service**: User authentication and authorization
+4. **HR Service**: Human resources and attendance management
+5. **Finance Service**: Financial operations and budget control
+6. **Notification Service**: Communication and alert distribution
+
+deployment
 
 ## Architecture Overview
-OrganiStation follows a **microservices architecture** with an API gateway pattern, designed to provide scalable enterprise resource planning capabilities.
+OrganiStation follows a **microservices architecture** with a clear separation of concerns across multiple specialized services. The system is designed around domain-driven principles, with each service handling a specific business domain.
 
-### System Design Philosophy
-
-- **Domain-driven design**: Each service owns a specific business domain (HR, Finance, Projects, etc.)
-- **Service autonomy**: Services operate independently with their own data models, business logic, and data layers
-
-### High-Level Architecture
+### System Architecture
 
 ```mermaid
 graph TB
     Frontend[React Frontend] --> Gateway[API Gateway]
-    Gateway --> Auth[Auth Service]
-    Gateway --> HR[HR Service]
-    Gateway --> Finance[Finance Service]
-    Gateway --> PM[Project Management Service]
-    Gateway --> Notification[Notification Service]
+    Gateway --> Auth[auth-service]
+    Gateway --> HR[hr-service]
+    Gateway --> Finance[finance-service]
+    Gateway --> PM[project-management-service]
+    Gateway --> Notification[notification-service]
+    Gateway --> RAG[RAG Pipeline Service]
     
     Auth --> AuthDB[(Auth Database)]
     HR --> HRDB[(HR Database)]
     Finance --> FinanceDB[(Finance Database)]
     PM --> PMDB[(Project Database)]
     Notification --> NotificationDB[(Notification Database)]
+    RAG --> VectorDB[(Vector Database)]
 ```
 
-### Core Components
+### Core Services
 
 #### API Gateway
-- **Purpose**: Single entry point for all client requests
-- **Responsibilities**: 
-  - Routes API calls to appropriate microservices
-  - Serves compiled frontend assets
-  - Handles cross-cutting concerns (authentication, logging)
-- **Technology**: Serves static assets and proxies API requests
+- **Purpose**: Central entry point for all client requests
+- **Responsibilities**: Request routing, authentication, static asset serving
+- **Technology**: Serves compiled React frontend assets through public directory
 
-#### Frontend Application
-- **Technology**: React with authentication context
-- **Architecture**: Single-page application (SPA)
+#### Authentication Service (`auth-service`)
+- **Purpose**: User authentication and authorization management
 - **Key Components**:
-  - `App` component as main application entry point
-  - `AuthProvider` for authentication state management
-  - Context-based state management
+  - JWT token management with `TokenPayload` structure
+  - Role-based access control with `RoleResponse`, `UserResponse`, and `PermissionResponse` schemas
+  - User registration, login, logout, and password management
 
-#### Microservices
+#### Human Resources Service (`hr-service`)
+- **Purpose**: Employee lifecycle and attendance management
+- **Key Entities**: `Employee`, `Attendance`, `LeaveRequest`
+- **Features**: Employee records, attendance tracking, leave request processing
 
-**Authentication Service**
-- Manages user authentication and authorization
-- Provides response schemas for users, roles, and permissions
-- Handles user registration, login, and role management
+#### Finance Service (`finance-service`)
+- **Purpose**: Financial operations and budget management
+- **Key Entities**: `Budget`, `Invoice`, `Expense`
+- **Features**: Budget planning, invoice management, expense tracking
 
-**HR Service** 
-- Employee lifecycle management
-- Attendance tracking with check-in/check-out functionality
-- Leave request processing
-- Job posting management
+#### Project Management Service (`project-management-service`)
+- **Purpose**: Project lifecycle and task management
+- **Key Entities**: `Project`, `Task`, `Ticket`
+- **Relationships**: Projects contain tasks and milestones, tickets are associated with projects
 
-**Finance Service**
-- Budget management with departmental allocation
-- Invoice processing and tracking
-- Expense management and approval workflows
+#### Notification Service (`notification-service`)
+- **Purpose**: Multi-channel communication system
+- **Features**: Email notifications, user-specific notifications, broadcast messaging
+- **Configuration**: Centralized settings management through `Settings` class
 
-**Project Management Service**
-- Project lifecycle management
-- Task assignment and tracking
-- Milestone management
-- Support ticket system
+#### RAG Pipeline Service
+- **Purpose**: Document management and intelligent querying
+- **Key Component**: `RAGPipeline` class for document ingestion and retrieval-augmented generation
+- **Features**: Document hash-based identification, content querying, knowledge extraction
 
-**Notification Service**
-- Multi-channel notification delivery
-- Email notifications
-- User-targeted and broadcast messaging
+### Design Philosophy
 
-### Architectural Patterns
+#### Domain-Driven Design
+- Each service represents a distinct business domain
+- Clear entity boundaries with well-defined relationships
+- Service-specific data models and business logic
 
-#### Resource-Based API Design
-All services follow RESTful conventions with resource-based URLs:
-- `/api/employees/{eid}` - Employee resources
-- `/api/projects/{pid}/tasks` - Nested task resources
-- `/api/documents/{doc_hash}` - Hash-based document identification
+#### RESTful API Design
+- Consistent resource-based URL patterns (`/api/{resource}/{id}`)
+- Standard HTTP methods for CRUD operations
+- Hash-based document identification for content integrity
 
-#### Domain Entity Relationships
-- **Employee ← Attendance**: One-to-many relationship via `employee_id`
-- **Employee ← LeaveRequest**: One-to-many relationship via `employee_id`
-- **Project ← Task**: One-to-many containment relationship
-- **Project ← Ticket**: One-to-many reference via `project_id`
+#### Microservices Patterns
+- **Service Independence**: Each service maintains its own database and business logic
+- **API-First**: All inter-service communication through well-defined APIs
+- **Configuration Management**: Centralized settings with service-specific configurations
+- **Authentication**: JWT-based stateless authentication across all services
 
-#### Configuration Management
-Centralized configuration through `Settings` classes:
-- Database connection strings (MongoDB)
-- Service URLs and ports
-- Security secrets (JWT, internal service authentication)
-- Environment-specific settings
+### Data Architecture
 
-### Data Flow Architecture
+#### Entity Relationships
+- **Employee-Centric**: `LeaveRequest` and `Attendance` entities linked to employees via `employee_id`
+- **Project-Centric**: `Ticket` entities associated with projects via `project_id`
+- **Hierarchical**: Projects contain tasks and milestones in parent-child relationships
 
-1. **Client Request Flow**:
-   - Frontend → Gateway → Microservice → Database
-   - Response follows reverse path with appropriate transformations
-
-2. **Inter-Service Communication**:
-   - Services communicate via HTTP APIs
-   - Internal service authentication using shared secrets
-   - Asynchronous notifications through notification service
-
-3. **Document Management**:
-   - RAG (Retrieval-Augmented Generation) pipeline for document processing
-   - Hash-based document identification for integrity
-   - Query capabilities for document search and retrieval
-
-### Scalability Considerations
-
-service discovery
+#### Identification Patterns
+- **Hash-Based**: Documents identified by content hash for integrity
+- **ID-Based**: Standard entities use typed IDs (eid, pid, tid, iid, etc.)
+- **Composite Keys**: Some entities use combination of identifiers for uniqueness
 
 ## High-Level Design
-OrganiStation follows a microservices architecture pattern with clear separation of concerns across functional domains. The system is organized into distinct subsystems with well-defined boundaries
-
-### Core Subsystems
-
-#### Presentation Layer
-- **Frontend Service**: React-based single-page application providing the user interface
-- **Gateway Service**: API gateway that serves frontend assets and routes API requests
-
-#### Business Logic Layer
-- **Authentication Service**: Handles user authentication, authorization, roles, and permissions
-- **HR Service**: Manages employee data, attendance tracking, and leave requests
-- **Finance Service**: Processes budgets, expenses, and invoices
-- **Project Management Service**: Coordinates projects, tasks, tickets, and milestones
-- **Notification Service**: Handles system-wide notifications and email communications
-
-#### Data Layer
-- **Document Management**: RAG pipeline for document ingestion and querying
-- **Database Services**: MongoDB-based persistence across services
-
-### Service Boundaries
-
-- **HR Domain**: Employee, Attendance, LeaveRequest entities
-- **Finance Domain**: Budget, Invoice, Expense entities
-- **Project Domain**: Project, Task, Ticket, Milestone entities
-- **Auth Domain**: User, Role, Permission entities
-- **Document Domain**: Document ingestion and retrieval
-- **Communication Domain**: Notification broadcasting and delivery
-
-### Architectural Layering
+### System Layers
 
 ```mermaid
 graph TB
@@ -186,17 +137,18 @@ graph TB
         GW[API Gateway]
     end
     
-    subgraph "Business Services Layer"
+    subgraph "Service Layer"
         AUTH[Auth Service]
         HR[HR Service]
         FIN[Finance Service]
-        PM[Project Management]
-        NOT[Notification Service]
+        PM[Project Management Service]
+        DOC[Document Service]
+        NOTIF[Notification Service]
     end
     
     subgraph "Data Layer"
-        DB[(MongoDB)]
-        RAG[RAG Pipeline]
+        DB[(Database)]
+        VECTOR[(Vector Store)]
     end
     
     FE --> GW
@@ -204,689 +156,679 @@ graph TB
     GW --> HR
     GW --> FIN
     GW --> PM
-    GW --> NOT
+    GW --> DOC
+    GW --> NOTIF
     
     AUTH --> DB
     HR --> DB
     FIN --> DB
     PM --> DB
-    NOT --> DB
-    RAG --> DB
+    DOC --> VECTOR
+    NOTIF --> DB
 ```
+
+### Core Subsystems
+
+#### Authentication & Authorization Service
+- **Boundary**: User identity, roles, and permissions management
+- **Responsibilities**: JWT token handling, user registration/login, role-based access control
+- **Key Components**: `TokenPayload`, `RoleResponse`, `UserResponse`, `PermissionResponse`
+
+#### Human Resources Service
+- **Boundary**: Employee lifecycle and attendance management
+- **Responsibilities**: Employee records, attendance tracking, leave requests
+- **Key Components**: `Employee`, `Attendance`, `LeaveRequest`
+
+#### Finance Service
+- **Boundary**: Financial operations and reporting
+- **Responsibilities**: Budget management, expense tracking, invoice processing
+- **Key Components**: `Budget`, `Expense`, `Invoice`
+
+#### Project Management Service
+- **Boundary**: Project and task coordination
+- **Responsibilities**: Project lifecycle, task management, ticket tracking
+- **Key Components**: `Project`, `Task`, `Ticket`
+
+#### Document Service
+- **Boundary**: Document storage and intelligent retrieval
+- **Responsibilities**: Document ingestion, RAG pipeline, query processing
+- **Key Components**: `RAGPipeline`, document hash-based identification
+
+#### Notification Service
+- **Boundary**: Communication and alerting
+- **Responsibilities**: Email notifications, broadcast messaging, user-specific alerts
+- **Key Components**: Email handlers, broadcast mechanisms
+
+### Service Boundaries
+
+database schemas
+- **Authentication**: Centralized JWT-based authentication with service-level authorization
+- **Communication**: Synchronous HTTP communication through the API gateway
 
 ### Cross-Cutting Concerns
 
-- **Security**: JWT-based authentication handled by auth service
-- **Configuration**: Centralized settings management with environment-specific configurations
-- **Inter-Service Communication**: RESTful APIs with standardized response schemas
-- **Asset Management**: Static frontend assets served through gateway public directory
+- **Configuration Management**: Centralized settings through `Settings` classes
+- **Error Handling**: Standardized HTTP status codes and error responses
+- **Logging**: Distributed logging across all services
+- **Health Monitoring**: Health check endpoints for service availability
 
 ## Component Design
-### Core Components
+### Core Business Components
 
-#### Gateway Service
-**Responsibilities:**
-- API routing and request forwarding
-- Frontend asset serving (React application)
-- Cross-cutting concerns handling
+The system is organized around key business entities that form the foundation of organizational management:
 
-**Key Features:**
-- Serves compiled frontend assets through `index-DuQXh1_U.js`
-- Routes API calls to appropriate microservices
-- Acts as single entry point for client requests
+#### Data Models
+- **Employee**: Core HR entity with properties for work-from-home tracking, status management, sick leave totals, hire dates, and email
+- **Project**: Project management entity with owner assignment, priority levels, descriptions, status tracking, and date management
+- **Task**: Task entity with status, priority, title, description, due dates, and assignee management
+- **Ticket**: Support ticket entity with priority levels, reporter tracking, status management, and project association
+- **Invoice**: Financial entity with client information, amounts, due dates, and status tracking
+- **Expense**: Expense tracking with categorization, amounts, titles, status, and notes
+- **Budget**: Financial planning entity with year, amount, department, month, period, and notes
+- **LeaveRequest**: Employee leave management with date ranges, types, status, and reasons
+- **Attendance**: Employee time tracking with check-in/out times, dates, and status
 
-#### Authentication Service
-**Responsibilities:**
-- User authentication and authorization
-- Role and permission management
-- JWT token handling
+### Service Architecture Components
 
-**Key Components:**
-- `UserResponse` schema for user data serialization
-- `RoleResponse` schema for role management
-- `PermissionResponse` schema for permission handling
-
-#### HR Service
-**Responsibilities:**
-- Employee lifecycle management
-- Attendance tracking
-- Leave request processing
-
-**Key Components:**
-- `Employee` entity with department, contact, and leave balance properties
-- `Attendance` class for check-in/check-out tracking
-- `LeaveRequest` entity for time-off management
-
-#### Finance Service
-**Responsibilities:**
-- Budget management and tracking
-- Invoice processing
-- Expense management
-
-**Key Components:**
-- `Budget` entity with period, department, and amount tracking
-- `Invoice` entity with client, status, and payment management
-- `Expense` entity with category, status, and approval workflow
-
-#### Project Management Service
-**Responsibilities:**
-- Project lifecycle management
-- Task assignment and tracking
-- Milestone management
-- Issue/ticket handling
-
-**Key Components:**
-- `Project` entity with owner, priority, and status tracking
-- `Task` entity with assignee, priority, and due date management
-- `Ticket` entity for issue tracking and resolution
-- `Milestone` entity for project checkpoint management
-
-#### Notification Service
-**Responsibilities:**
-- Multi-channel notification delivery
-- User-targeted messaging
-- Email communication
-
-**Key Features:**
-- Broadcast notifications to all users
-- User-specific notification targeting
-- Email notification capabilities
-- Configurable settings through `Settings` class
-
-#### RAG Pipeline Service
-**Responsibilities:**
-- Document ingestion and processing
-- Query processing and response generation
-- Knowledge retrieval and augmentation
-
-**Key Features:**
-- Document management with hash-based identification
-- Query processing capabilities
-- Integration with document storage and retrieval
+#### Microservices
+- **auth-service**: Authentication and authorization with role-based access control
+  - Contains schema models: RoleResponse, UserResponse, PermissionResponse
+  - Handles user management, role assignments, and permission controls
+- **hr-service**: Human resources management
+  - Contains Attendance class for time tracking functionality
+  - Manages employee data, leave requests, and attendance records
+- **finance-service**: Financial operations management
+  - Handles budgets, expenses, and invoices
+  - Provides financial reporting and tracking capabilities
+- **project-management-service**: Project and task coordination
+  - Manages projects, tasks, tickets, and milestones
+  - Coordinates project workflows and assignments
+- **notification-service**: Communication and alerts
+  - Contains Settings configuration for notification management
+  - Handles email notifications, broadcasts, and user-specific alerts
+- **gateway**: API gateway and frontend asset serving
+  - Serves compiled frontend assets through public directory
+  - Routes requests to appropriate backend services
 
 ### Component Interactions
 
-#### Frontend-Gateway Integration
-- React application (`App` component) served through gateway
-- Authentication context (`AuthProvider`) manages user sessions
-- All API requests routed through gateway endpoint
+#### Entity Relationships
+- **Tickets** belong to **Projects** via project_id property
+- **LeaveRequests** belong to **Employees** via employee_id property
+- **Attendance** records belong to **Employees** via employee_id property
+- **Projects** contain **Tasks** and **Milestones**
+- **Employees** have associated **Attendance** records
 
-#### Service-to-Service Dependencies
-- Projects contain Tasks and Milestones (composition relationship)
-- Employees have Attendance records and LeaveRequests (aggregation)
-- Tickets reference Projects for context and organization
-- Users receive targeted Notifications through notification service
+#### Service Dependencies
+- **Gateway** serves frontend assets and routes API requests
+- **Auth-service** provides authentication for all other services
+- **Notification-service** integrates with other services for alerts
+- Services communicate through RESTful APIs with standardized endpoints
 
-#### Data Entity Relationships
-- `Attendance` → `Employee` (via employee_id)
-- `LeaveRequest` → `Employee` (via employee_id)
-- `Ticket` → `Project` (via project_id)
-- Update entities provide modification capabilities for core entities
+### Frontend Components
 
-### Configuration Management
+#### React Application Structure
+- **App**: Main React application component
+- **AuthProvider**: Authentication context provider for state management
+- Component-based architecture with context providers for shared state
 
-#### Settings Configuration
-**Application Settings:**
-- `PORT` and `HOST` for service binding
-- `MONGODB_URI` for database connectivity
-- `JWT_SECRET` for authentication
-- `INTERNAL_SERVICE_SECRET` for inter-service communication
-- `FINANCE_SERVICE_URL` for service discovery
+### Specialized Components
 
-#### Service-Specific Configuration
-- Auth service: Response schema configurations
-- Notification service: Delivery and routing settings
-- Each service maintains isolated configuration management
+#### RAG Pipeline
+- **RAGPipeline**: Retrieval-Augmented Generation service for document management and querying
+- Handles document ingestion, storage, and intelligent querying capabilities
+
+#### Configuration Management
+- **Settings**: Application configuration with JWT settings and service URLs
+- **TokenPayload**: JWT token structure with expiration, permissions, role, and subject data
+
+### API Handler Components
+
+The system implements a comprehensive set of handlers for CRUD operations:
+
+#### Resource Management Handlers
+- Document operations: ingest, query, view, delete
+- Employee management: create, read, update, delete, attendance tracking
+- Project coordination: create, update, delete, task management
+- Financial operations: budget management, expense tracking, invoice handling
+- Ticket system: create, update, delete, assignment management
+
+#### Authentication Handlers
+- User registration, login, logout
+- Password management and token refresh
+- Role and permission management
+
+#### Notification Handlers
+- Email sending, broadcasting, user-specific notifications
+- Integration with other services for event-driven alerts
 
 ## Runtime Design
 ### Request Lifecycle
 
-The OrganiStation system follows a standard microservices request lifecycle pattern:
+The OrganiStation system follows a standard microservices request flow pattern:
 
 1. **Client Request**: Frontend applications send HTTP requests to the API gateway
-2. **Gateway Routing**: The gateway routes requests to appropriate microservices based on URL patterns
-3. **Service Processing**: Individual services handle business logic and data operations
+2. **Gateway Routing**: The gateway service routes requests to appropriate backend services based on URL patterns
+3. **Service Processing**: Individual services (auth, hr, finance, notification) handle business logic
 4. **Response Assembly**: Services return responses through the gateway back to clients
 
 ### Execution Flows
 
 #### Authentication Flow
-- Login requests (`POST /login`) are processed by the auth-service
-- Token refresh operations (`POST /refresh`) maintain session state
-- Protected endpoints validate tokens before processing requests
-- User management operations (create, update, delete) flow through auth-service
 
-#### CRUD Operation Flows
-The system implements consistent CRUD patterns across all entities:
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Gateway
+    participant AuthService
+    
+    Client->>Gateway: POST /login
+    Gateway->>AuthService: Forward credentials
+    AuthService->>AuthService: Validate user
+    AuthService->>Gateway: Return JWT token
+    Gateway->>Client: Authentication response
+```
 
-**Create Operations**:
-- `POST /api/{resource}` → Service validation → Database insertion → Response
-- Nested resource creation (e.g., `POST /api/projects/{pid}/tasks`) maintains parent-child relationships
+#### Resource Management Flow
 
-**Read Operations**:
-- `GET /api/{resource}` → Service query → Data retrieval → Response formatting
-- Relationship queries (e.g., `GET /api/employees/{eid}/attendance`) follow foreign key associations
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Gateway
+    participant HRService
+    participant FinanceService
+    
+    Client->>Gateway: GET /api/employees/{eid}
+    Gateway->>HRService: Route to employee handler
+    HRService->>HRService: Query employee data
+    HRService->>Gateway: Employee response
+    Gateway->>Client: JSON response
+    
+    Client->>Gateway: GET /api/budgets
+    Gateway->>FinanceService: Route to budget handler
+    FinanceService->>FinanceService: Query budget data
+    FinanceService->>Gateway: Budget list
+    Gateway->>Client: JSON response
+```
 
-**Update Operations**:
-- `PUT /api/{resource}/{id}` → Validation → Database update → Response
-- Dedicated update classes (InvoiceUpdate, ExpenseUpdate, TaskUpdate, TicketUpdate, LeaveUpdate) handle entity modifications
+#### Document Processing Flow
 
-**Delete Operations**:
-- `DELETE /api/{resource}/{id}` → Authorization check → Cascade handling → Database deletion
-
-#### Notification Flow
-- Broadcast notifications (`POST /notifications/broadcast`) distribute to all users
-- Targeted notifications (`POST /notifications/user/{userId}`) route to specific users
-- Email notifications (`POST /notifications/send-email`) integrate with external email services
+```mermaid
+sequenceDiagram
+    participant Client
+    participant Gateway
+    participant DocumentService
+    
+    Client->>Gateway: POST /ingest
+    Gateway->>DocumentService: Forward document
+    DocumentService->>DocumentService: Process & hash document
+    DocumentService->>Gateway: Document hash
+    Gateway->>Client: Ingestion response
+    
+    Client->>Gateway: GET /api/documents/view/{doc_hash}
+    Gateway->>DocumentService: Request document
+    DocumentService->>DocumentService: Retrieve by hash
+    DocumentService->>Gateway: Document file
+    Gateway->>Client: Serve original file
+```
 
 ### Concurrency Model
 
 #### Service-Level Concurrency
-- Each microservice (auth, hr, finance, notification) operates independently
-- Services can scale horizontally without affecting other components
-- Database connections are managed per service to avoid resource contention
+- **Microservices Architecture**: Each service (auth, hr, finance, notification) runs independently
+- **Stateless Design**: Services maintain no session state, enabling horizontal scaling
+- **Request Isolation**: Individual requests are processed independently within each service
 
-#### Request Handling
-- The gateway serves as a single entry point, managing concurrent client connections
-- Static asset serving (`GET *`) is handled separately from API requests for optimal performance
-- Health check endpoints (`GET /api/health`, `GET /api/auth/health`) provide service availability monitoring
+#### Gateway Concurrency
+- **Asset Serving**: Gateway serves compiled frontend assets concurrently through public directory
+- **Route Multiplexing**: Multiple client requests are routed simultaneously to backend services
+- **Load Distribution**: Gateway distributes requests across service instances
 
-#### Data Consistency
-- Entity relationships (Employee→Attendance, Project→Task, Ticket→Project) maintain referential integrity
-- Update operations use dedicated update classes to ensure atomic modifications
-- Cross-service operations coordinate through the gateway layer
+#### Data Access Patterns
+- **Resource-Based Routing**: Requests are routed based on resource type (employees, projects, documents)
+- **ID-Based Isolation**: Operations on specific resources use unique identifiers (employee_id, project_id, doc_hash)
+- **Hierarchical Access**: Related resources follow parent-child patterns (projects/{pid}/tasks, employees/{eid}/attendance)
 
-### Error Handling
-- Services implement consistent error response formats
-- The gateway handles service unavailability and routing failures
-- Database reset functionality (`POST /api/reset`) provides system recovery capabilities
+#### Error Handling
+- **Service Health Checks**: Each service exposes health endpoints (/api/auth/health, /api/health)
+- **Graceful Degradation**: Services can operate independently if others are unavailable
+- **Request Timeout Management**: Gateway handles timeouts for unresponsive services
 
 ## Integration Design
 ### API Gateway Pattern
 
-OrganiStation implements an API Gateway pattern where the gateway service acts as the central entry point for all client requests. The gateway serves dual purposes:
-
-- **Frontend Asset Serving**: Delivers compiled React application assets through the public directory
-- **API Request Routing**: Routes API calls to appropriate microservices based on path patterns
-
-### Service Communication
-
-The system uses RESTful APIs for inter-service communication with the following integration patterns:
-
-#### Microservice Endpoints
-
-**Authentication Service**
-- Health check: `GET /api/auth/health`
-- User management: `POST /register`, `POST /login`, `POST /logout`
-- Token management: `POST /refresh`
-- Role/Permission management: `GET /roles`, `POST /roles`, `PUT /roles/{role_name}`
-
-**HR Service**
-- Employee management: `GET /api/employees`, `POST /api/employees`, `PUT /api/employees/{eid}`
-- Attendance tracking: `POST /api/attendance`, `GET /api/employees/{eid}/attendance`
-- Leave management: `GET /api/leaves`, `PUT /api/leaves/{lid}`
-
-**Finance Service**
-- Budget management: `GET /api/budgets`, `POST /api/budgets`
-- Expense tracking: `GET /api/expenses`, `POST /api/expenses`, `PUT /api/expenses/{eid}`
-- Invoice management: `GET /api/invoices`, `PUT /api/invoices/{iid}`
-
-**Notification Service**
-- Broadcast notifications: `POST /notifications/broadcast`
-- User-specific notifications: `POST /notifications/user/{userId}`
-- Email notifications: `POST /notifications/send-email`
-
-### Data Integration Patterns
-
-#### Entity Relationships
-- **Employee-Attendance**: Attendance records reference employees via `employee_id`
-- **Employee-Leave**: Leave requests reference employees via `employee_id`
-- **Project-Task**: Tasks belong to projects via `project_id`
-- **Project-Milestone**: Projects contain milestones accessible via project endpoints
-
-#### Update Operations
-The system implements dedicated update classes for entity modifications:
-- `InvoiceUpdate` for invoice modifications
-- `ExpenseUpdate` for expense modifications
-- `TaskUpdate` for task modifications
-- `TicketUpdate` for ticket modifications
-- `LeaveUpdate` for leave request modifications
-
-### External System Integration
-
-#### Document Management
-- Document ingestion: `POST /ingest`
-- Document querying: `POST /api/query`
-- Document viewing: `GET /api/documents/view/{doc_hash}`
-- Document deletion: `DELETE /api/documents/{doc_hash}`
-
-#### System Administration
-- Health monitoring: `GET /api/health`
-- Database reset: `POST /api/reset`
-- System summary: `GET /api/summary`
-
-### Response Schemas
-
-The system defines standardized response schemas for consistent API communication:
-- `UserResponse` for user data serialization
-- `RoleResponse` for role information
-- `PermissionResponse` for permission data
-
-All services implement proper error handling and status code responses following RESTful conventions.
-
-## Data Flow Design
-The OrganiStation system implements a comprehensive data flow architecture that orchestrates information movement across multiple microservices through a centralized gateway pattern.
-
-### Primary Data Flow Patterns
-
-#### 1. Client-Gateway-Service Flow
-All client interactions follow a consistent three-tier flow:
-
-```
-Frontend (React) → Gateway → Microservice → Database
-                ←         ←             ←
-```
-
-**Step-by-step process:**
-1. **Client Request**: React frontend initiates API calls through authenticated context
-2. **Gateway Routing**: Gateway receives requests and routes to appropriate microservice based on URL patterns
-3. **Service Processing**: Target microservice processes business logic and data operations
-4. **Response Chain**: Data flows back through the same path with proper formatting
-
-#### 2. Authentication Flow
-Secure data access follows a token-based authentication pattern:
-
-```mermaid
-sequenceDiagram
-    participant F as Frontend
-    participant G as Gateway
-    participant A as Auth Service
-    participant S as Target Service
-    
-    F->>G: Login Request
-    G->>A: Validate Credentials
-    A->>G: JWT Token + User/Role Data
-    G->>F: Authentication Response
-    F->>G: API Request + JWT
-    G->>S: Authorized Request
-    S->>G: Service Response
-    G->>F: Final Response
-```
-
-**Authentication data elements:**
-- User credentials flow to auth-service for validation
-- JWT tokens carry user identity and permissions
-- Role and permission data flows through UserResponse, RoleResponse, and PermissionResponse schemas
-
-#### 3. Business Entity Data Flows
-
-**Employee Management Flow:**
-
-```
-Employee Creation → HR Service → Employee Entity
-                 ↓
-Attendance Tracking → Attendance Entity (references Employee via employee_id)
-                 ↓
-Leave Requests → LeaveRequest Entity (references Employee via employee_id)
-```
-
-**Project Management Flow:**
-
-```
-Project Creation → Project Management Service → Project Entity
-              ↓
-Task Creation → Task Entity (within Project context via project_id)
-              ↓
-Ticket Creation → Ticket Entity (references Project via project_id)
-              ↓
-Milestone Tracking → Milestone Entity (within Project)
-```
-
-**Financial Data Flow:**
-
-```
-Budget Planning → Finance Service → Budget Entity (period, department, amount)
-              ↓
-Expense Submission → Expense Entity (submitted_by, category, amount)
-              ↓
-Invoice Management → Invoice Entity (client_name, due_date, amount)
-```
-
-#### 4. Document and Knowledge Flow
-The RAG (Retrieval-Augmented Generation) pipeline manages document processing:
-
-```
-Document Upload → /ingest endpoint → RAGPipeline Service
-              ↓
-Document Processing → Hash-based identification → Document storage
-              ↓
-Query Processing → /query endpoint → Knowledge retrieval → Response generation
-```
-
-#### 5. Notification Flow
-Multi-channel notification distribution:
-
-```
-Event Trigger → Notification Service → Notification Entity
-            ↓
-Broadcast (/notifications/broadcast) → All users
-            ↓
-Email (/notifications/send-email) → Specific recipients
-            ↓
-User-specific (/notifications/user/{userId}) → Individual user
-```
-
-### Data Consistency Patterns
-
-**Entity Relationships:**
-- Attendance and LeaveRequest entities maintain referential integrity with Employee via employee_id
-- Tickets maintain project context through project_id references
-- Update operations use dedicated update classes (TaskUpdate, ExpenseUpdate, etc.) for controlled modifications
-
-**Cross-Service Data Coordination:**
-- Gateway maintains service routing configuration through Settings (FINANCE_SERVICE_URL, etc.)
-- Internal service communication secured via INTERNAL_SERVICE_SECRET
-- MongoDB URI configuration ensures consistent data persistence across services
-
-### Error Handling and Data Validation
-
-**Request Validation Flow:**
-1. Frontend validates input through React components
-2. Gateway performs routing validation
-3. Target service applies business rule validation
-4. Database constraints ensure data integrity
-5. Error responses flow back through the same chain with appropriate HTTP status codes
-
-**Data Update Flow:**
-All entity updates follow a consistent pattern:
-
-```
-PUT /api/{resource}/{id} → Service validation → Update class processing → Database update → Response
-```
-
-This architecture ensures data consistency, security
-
-## Security Architecture
-### Security Components
-
-```mermaid
-flowchart TD
-    Client[Client Browser] --> Gateway[API Gateway]
-    Gateway --> Frontend[React Frontend]
-    Gateway --> Auth[Auth Service]
-    Gateway --> HR[HR Service]
-    Gateway --> Finance[Finance Service]
-    Gateway --> Notification[Notification Service]
-    
-    Auth -.->|Validates| Gateway
-    
-    classDef security fill:#ff9999
-    class Gateway,Auth security
-```
-
-**Core Security Components:**
-
-1. **API Gateway (Security Perimeter)**
-   - Serves frontend assets securely
-   - Routes and validates all API calls
-   - Enforces authentication before service access
-   - Acts as single point of entry for security policies
-
-2. **Auth Service (Identity Provider)**
-   - Centralized user authentication and authorization
-   - Issues and validates authentication tokens
-   - Manages user identity lifecycle
-
-3. **Frontend Security Context**
-   - React application with integrated authentication context
-   - Maintains secure session state
-   - Handles client-side security flows
-
-### Security Data Flow
-
-**Authentication Flow:**
-1. Client requests access through API Gateway
-2. Gateway validates request and forwards to Auth Service
-3. Auth Service processes authentication and returns tokens
-4. Gateway forwards authenticated requests to appropriate microservices
-5. Each service enforces domain-specific authorization
-
-**Request Security Pipeline:**
-- **Entry Point**: All requests enter through API Gateway
-- **Authentication**: Gateway validates user credentials via Auth Service
-- **Authorization**: Individual services enforce resource-level permissions
-- **Response**: Secure response routing back through Gateway
-
-### Microservices Security Model
-
-Each microservice operates with isolated security boundaries:
-- **HR Service**: Manages employee data access controls
-- **Finance Service**: Enforces budget and financial data permissions
-- **Notification Service**: Controls message delivery authorization
-
-Services rely on gateway-level authentication while maintaining service-specific authorization logic.
-
-## Deployment Architecture
-### Service Topology
-
-OrganiStation follows a microservices deployment pattern with the following service topology:
+OrganiStation implements a centralized API gateway that serves as the single entry point for all client requests. The gateway handles routing, asset serving, and request distribution to appropriate microservices.
 
 ```mermaid
 graph TB
-    Client[Client Browser] --> Gateway[Gateway Service]
-    Gateway --> Frontend[React Frontend]
-    Gateway --> Auth[Auth Service]
-    Gateway --> HR[HR Service]
-    Gateway --> Finance[Finance Service]
-    Gateway --> Notification[Notification Service]
+    Client[Client Applications]
+    Gateway[API Gateway]
+    Auth[auth-service]
+    HR[hr-service]
+    Finance[finance-service]
+    Notification[notification-service]
+    Frontend[Frontend Assets]
     
-    Auth --> MongoDB[(MongoDB)]
-    HR --> MongoDB
-    Finance --> MongoDB
-    Notification --> MongoDB
+    Client --> Gateway
+    Gateway --> Auth
+    Gateway --> HR
+    Gateway --> Finance
+    Gateway --> Notification
+    Gateway --> Frontend
 ```
 
-### Gateway Pattern
+### RESTful API Design
 
-The gateway service acts as the single entry point for all client requests:
-- **Static Asset Serving**: Serves the React frontend application
-- **API Routing**: Routes `/api/*` requests to appropriate microservices
-- **Load Distribution**: Distributes traffic across backend services
+The system exposes a comprehensive REST API with standardized endpoints across all services:
+
+#### Core Resource Endpoints
+- **Employee Management**: `/api/employees/*` - CRUD operations for employee records
+- **Project Management**: `/api/projects/*` - Project lifecycle management with nested resources
+- **Document Management**: `/api/documents/*` - Document storage and retrieval with hash-based identification
+- **Financial Operations**: `/api/budgets/*`, `/api/expenses/*`, `/api/invoices/*` - Financial resource management
+- **Ticketing System**: `/api/tickets/*` - Issue tracking and resolution
+
+#### Service-Specific Integrations
+
+**Authentication Service**
+- Health monitoring: `GET /api/auth/health`
+- User management with role-based access control
+- Session management with refresh token support
+
+**HR Service**
+- Attendance tracking: `POST /api/attendance`
+- Employee-specific attendance retrieval: `GET /api/employees/{eid}/attendance`
+- Leave request management
+
+**Finance Service**
+- Budget oversight: `GET /api/budgets`
+- Expense and invoice lifecycle management
+- Financial reporting capabilities
+
+**Notification Service**
+- Broadcast messaging: `POST /notifications/broadcast`
+- User-specific notifications: `POST /notifications/user/{userId}`
+- Email integration: `POST /notifications/send-email`
+
+### Inter-Service Communication
+
+- **Response Configuration**: Services implement standardized response models (RoleResponse, UserResponse, PermissionResponse)
+- **Error Handling**: Consistent error response formats across all services
+- **Health Monitoring**: Each service exposes health check endpoints for system monitoring
+
+### Document Integration
+
+The system implements a hash-based document management system:
+- Documents are identified by unique hash values
+- Original files served through dedicated view endpoints: `GET /api/documents/view/{doc_hash}`
+- Document ingestion through: `POST /ingest`
+- Query capabilities: `POST /api/query` and `POST /query`
+
+### Frontend Integration
+
+The gateway serves compiled frontend assets through a public directory structure, enabling seamless integration between the React frontend and backend services. Static assets are served with optimized file names (e.g., `index-DuQXh1_U.js`) for efficient caching and delivery.
+
+## Data Flow Design
+### Core Data Flow Patterns
+
+OrganiStation implements several key data flow patterns that govern how information moves through the system:
+
+#### 1. Request-Response Flow
+The primary data flow follows a standard microservices request-response pattern:
+
+```mermaid
+flowchart TD
+    A[Frontend Client] --> B[Gateway Service]
+    B --> C{Route Analysis}
+    C -->|Auth Operations| D[Auth Service]
+    C -->|HR Operations| E[HR Service]
+    C -->|Finance Operations| F[Finance Service]
+    C -->|Project Operations| G[Project Management Service]
+    C -->|Notifications| H[Notification Service]
+    D --> I[Database]
+    E --> I
+    F --> I
+    G --> I
+    H --> I
+    I --> D
+    I --> E
+    I --> F
+    I --> G
+    I --> H
+    D --> B
+    E --> B
+    F --> B
+    G --> B
+    H --> B
+    B --> A
+```
+
+#### 2. Entity-Specific Data Flows
+
+**Employee Management Flow:**
+1. Client requests employee data via `GET /api/employees`
+2. Gateway routes to HR service
+3. HR service queries Employee entities from database
+4. Response includes employee details (status, hire_date, email, wfh_total, sick_total)
+5. Related attendance data accessible via `GET /api/employees/{eid}/attendance`
+
+**Project Management Flow:**
+1. Project creation via `POST /api/projects`
+2. Project entity stored with properties (owner, priority, description, status, due_date, start_date)
+3. Tasks and milestones linked to projects via project_id
+4. Task creation follows `POST /api/projects/{pid}/tasks` pattern
+5. Tickets associated with projects through project_id relationship
+
+**Financial Data Flow:**
+1. Budget entities managed via `GET/POST /api/budgets`
+2. Expense tracking through Expense entities (date, category, amount, title, status, notes)
+3. Invoice management with Invoice entities (description, due_date, client_name, amount, status)
+4. All financial data flows through the finance-service component
+
+#### 3. Document Processing Flow
+
+The system implements a specialized RAG (Retrieval-Augmented Generation) pipeline for document management:
+
+1. **Document Ingestion:** `POST /ingest` → RAGPipeline service
+2. **Document Storage:** Hash-based identification system for Document entities
+3. **Document Retrieval:** `GET /api/documents` and `GET /api/documents/view/{doc_hash}`
+4. **Document Querying:** `POST /api/query` for intelligent document search
+
+#### 4. Authentication & Authorization Flow
+
+1. User login via `POST /login` → Auth service
+2. JWT token generation with TokenPayload (exp, permissions, role, sub)
+3. Token validation on subsequent requests
+4. Role-based access control through RoleResponse and PermissionResponse schemas
+5. Password management via `POST /change-password`
+6. Session management through `POST /refresh` and `POST /logout`
+
+#### 5. Notification Flow
+
+1. **Broadcast Notifications:** `POST /notifications/broadcast`
+2. **User-Specific Notifications:** `POST /notifications/user/{userId}`
+3. **Email Notifications:** `POST /notifications/send-email`
+4. All notifications processed through the notification-service
+
+#### 6. Leave Request Processing Flow
+
+1. LeaveRequest entities created with employee_id association
+2. Leave requests contain (end_date, employee_id, type, start_date, status, reason)
+3. Updates processed via `PUT /api/leaves/{lid}`
+4. Integration with Employee attendance tracking
+
+#### 7. Data Consistency Patterns
+
+- **Entity Relationships:** Maintained through foreign key patterns (employee_id, project_id)
+- **Hash-Based Identification:** Documents use hash-based identification for integrity
+- **Status Tracking:** Consistent status fields across entities (Employee, Project, Task, Ticket, Invoice, Expense)
+- **Audit Trail:** Date tracking in entities (hire_date, due_date, start_date, end_date)
+
+#### 8. Error Handling & Recovery
+
+- Database reset capability via `POST /api/reset` and `POST /reset`
+- Health check endpoints for service monitoring
+- Structured error responses through service-specific schemas
+
+This data flow design ensures consistent
+
+## Security Architecture
+### Authentication Flow
+
+The OrganiStation platform implements a centralized security model with the auth-service as the primary authentication authority.
+
+```mermaid
+flowchart TD
+    Client[Client Application] --> Gateway[API Gateway]
+    Gateway --> AuthService[Auth Service]
+    AuthService --> UserDB[(User/Role/Permission Models)]
+    Gateway --> HRService[HR Service]
+    Gateway --> FinanceService[Finance Service]
+    Gateway --> NotificationService[Notification Service]
+    
+    Frontend[React Frontend] --> AuthContext[Authentication Context]
+    AuthContext --> Gateway
+```
+
+### Security Components
+
+#### API Gateway Security Layer
+- **Request Routing**: Centralized entry point for all client requests
+- **Authentication Enforcement**: Validates authentication tokens before routing to services
+- **Public Asset Management**: Secure handling of public resources
+
+#### Authentication Service
+- **User Management**: Comprehensive user model with authentication capabilities
+- **Role-Based Access Control**: Role and permission models for fine-grained access control
+- **Token Management**: Secure token generation and validation
+
+#### Service Security Boundaries
+- **HR Service**: Protected employee and attendance data access
+- **Finance Service**: Secured budget management and financial data
+- **Notification Service**: Controlled notification configuration and delivery
+
+### Document Security
+- **Hash-Based Identification**: Documents identified using secure hash mechanisms
+- **Access Control Integration**: Document access tied to authentication service permissions
+
+## Deployment Architecture
+The OrganiStation system follows a microservices deployment topology with multiple independent services coordinated through an API gateway.
+
+### Service Topology
+
+```mermaid
+graph TB
+    Client[Client Applications]
+    Gateway[API Gateway]
+    Frontend[Frontend Service]
+    Auth[Auth Service]
+    HR[HR Service]
+    Finance[Finance Service]
+    Notification[Notification Service]
+    
+    Client --> Gateway
+    Gateway --> Frontend
+    Gateway --> Auth
+    Gateway --> HR
+    Gateway --> Finance
+    Gateway --> Notification
+    
+    Frontend -.-> Auth
+    HR -.-> Auth
+    Finance -.-> Auth
+    Notification -.-> Auth
+```
+
+### Deployment Components
+
+| Component | Type | Purpose |
+|-----------|------|----------|
+| **Gateway** | API Gateway | Request routing, public asset serving, and service coordination |
+| **Frontend** | React Application | User interface with authentication context management |
+| **Auth Service** | Authentication Service | User, role, and permission management |
+| **HR Service** | Business Service | Human resources and attendance functionality |
+| **Finance Service** | Business Service | Budget management and financial operations |
+| **Notification Service** | Support Service | System notifications and configuration management |
+
+### Architectural Patterns
+
+- **Microservices Architecture**: Independent, loosely-coupled services
+- **API Gateway Pattern**: Centralized request routing and service orchestration
+- **RESTful API Design**: Standardized HTTP-based service interfaces
 
 ### Service Communication
 
-- **External Access**: All external traffic flows through the gateway
-- **Internal Communication**: Services communicate using internal service secrets
-- **Database Access**: Each service maintains its own MongoDB connection
-
-### Environment Configuration
-
-Services are configured through environment variables:
-- `PORT`: Service listening port
-- `INTERNAL_SERVICE_SECRET`: Inter-service authentication
-- `MONGODB_URI`: Database connection string
-- `JWT_SECRET`: Token signing secret
-- `FINANCE_SERVICE_URL`: Finance service endpoint
-- `HOST`: Service host binding
+- Client requests are routed through the API gateway to appropriate service endpoints
+- Authentication is centralized through the dedicated auth-service
+- Services maintain independence while coordinating through well-defined APIs
 
 ## Dependency Analysis
 ### Internal Dependencies
 
 #### Service-to-Service Dependencies
 
-**Gateway Service**
-- **Frontend Assets**: Serves compiled React application through `index-DuQXh1_U.js`
-- **API Routing**: Routes requests to backend microservices
-- **Rationale**: Centralized entry point for all client requests and static asset delivery
+**Core Service Dependencies:**
+- **Gateway Service** → Frontend Assets: Serves compiled React application assets through public directory
+- **Auth Service** → Schema Models: Contains response configurations for roles, users, and permissions
+- **Notification Service** → Configuration: Manages settings and service configurations
 
-**Auth Service**
-- **Schema Dependencies**: Contains `PermissionResponse`, `RoleResponse`, and `UserResponse` configurations
-- **Rationale**: Provides authentication and authorization for all other services
+**Data Model Dependencies:**
+- **Ticket** → **Project**: Tickets belong to projects via `project_id` property
+- **LeaveRequest** → **Employee**: Leave requests belong to employees via `employee_id` property  
+- **Attendance** → **Employee**: Attendance records belong to employees via `employee_id` property
+- **Project** → **Task**: Projects contain tasks accessible via project endpoints
+- **Project** → **Milestone**: Projects contain milestones accessible via project endpoints
+- **Employee** → **Attendance**: Employees have attendance records accessible via employee ID
 
-**HR Service**
-- **Employee Management**: Core dependency for attendance tracking and leave management
-- **Rationale**: Centralized human resources operations with employee lifecycle management
+#### API Service Dependencies
 
-**Finance Service**
-- **Budget Operations**: Handles financial data through `FINANCE_SERVICE_URL` configuration
-- **Rationale**: Isolated financial operations for compliance and security
+**Identified Services:**
+- `finance-service`: Handles budgets, expenses, and invoices
+- `hr-service`: Manages employees, attendance, and leave requests
+- `project-management-service`: Handles projects, tasks, and tickets
+- `auth-service`: Manages authentication, users, roles, and permissions
+- `notification-service`: Handles notifications and email services
 
-**Notification Service**
-- **Communication Hub**: Handles broadcast, email, and user-specific notifications
-- **Rationale**: Centralized communication system for cross-service notifications
-
-#### Data Model Dependencies
-
-**Employee-Centric Relationships**
-- `Attendance` → `Employee` (via `employee_id`)
-- `LeaveRequest` → `Employee` (via `employee_id`)
-- **Rationale**: Employee data serves as the foundation for HR operations
-
-**Project Management Relationships**
-- `Ticket` → `Project` (via `project_id`)
-- `Project` → `Task` (contains tasks)
-- `Project` → `Milestone` (contains milestones)
-- **Rationale**: Hierarchical project structure enables organized work management
-
-**Update Pattern Dependencies**
-- `InvoiceUpdate` → `Invoice`
-- `ExpenseUpdate` → `Expense`
-- `TaskUpdate` → `Task`
-- `TicketUpdate` → `Ticket`
-- `LeaveUpdate` → `LeaveRequest`
-- **Rationale**: Separate update models provide controlled modification patterns
+**Cross-Service Resource Access:**
+- Document management with hash-based identification
+- User management across authentication and business services
+- Project-based resource organization (tasks, milestones, tickets)
 
 ### External Dependencies
 
-#### Infrastructure Dependencies
+#### Technology Stack Dependencies
 
-**Database**
-- **MongoDB**: Primary data store (via `MONGODB_URI`)
-- **Rationale**: Document-based storage suitable for flexible business entity schemas
+**Frontend Dependencies:**
+- **React**: Main UI framework (evidenced by App.jsx and AuthContext.jsx)
+- **JavaScript/ES6**: Frontend application logic
+- **Build Tools**: Asset compilation and bundling (evidenced by compiled assets)
 
-**Security**
-- **JWT**: Authentication tokens (via `JWT_SECRET`)
-- **Internal Service Authentication**: Service-to-service communication (via `INTERNAL_SERVICE_SECRET`)
-- **Rationale**: Stateless authentication and secure inter-service communication
+**Backend Dependencies:**
+- **Python**: Primary backend language (evidenced by .py files and class structures)
+- **FastAPI/Similar Framework**: REST API framework (evidenced by route patterns)
+- **JWT**: Authentication token management (evidenced by TokenPayload class)
 
-**RAG Pipeline**
-- **Document Processing**: `RAGPipeline` service for document ingestion, search capabilities
+**Infrastructure Dependencies:**
+- **Database**: Persistent storage for all business entities
+- **File Storage**: Document storage system with hash-based identification
+- **Email Service**: External email delivery for notifications
 
-#### Configuration Dependencies
+#### Rationale for Dependencies
 
-**Runtime Configuration**
-- `HOST` and `PORT`: Service binding configuration
-- `FINANCE_SERVICE_URL`: Inter-service communication endpoint
-- **Rationale**: Environment-specific deployment flexibility
+**React Frontend:**
+- **Modern UI Development**: Component-based architecture for maintainable interfaces
+- **State Management**: Context-based authentication state management
+- **Asset Optimization**: Compiled and minified assets for performance
 
-### Dependency Rationale Summary
+**Hash-Based Document Management:**
+- **Content Integrity**: Hash-based identification ensures document integrity
+- **Deduplication**: Prevents storage of duplicate documents
+- **Immutable References**: Stable document references across the system
 
-## API Gateway and Service Interfaces
-### API Gateway Architecture
+**JWT Authentication:**
+- **Stateless Authentication**: No server-side session storage required
+- **Cross-Service Security**: Consistent authentication across microservices
+- **Role-Based Access**: Embedded permissions and roles in token payload
 
-The system uses a centralized API gateway that routes requests to appropriate microservices:
+## API Architecture
+### Service API Structure
 
-```mermaid
-graph TB
-    Client[Client Applications]
-    Gateway[API Gateway]
-    Auth[Auth Service]
-    HR[HR Service]
-    Finance[Finance Service]
-    Project[Project Management Service]
-    Notification[Notification Service]
-    
-    Client --> Gateway
-    Gateway --> Auth
-    Gateway --> HR
-    Gateway --> Finance
-    Gateway --> Project
-    Gateway --> Notification
+The OrganiStation platform exposes APIs through multiple specialized services, each handling specific business domains:
+
+**Core Services**
+- **Authentication Service**: User management, roles, and permissions
+- **HR Service**: Employee management, attendance, and leave requests
+- **Finance Service**: Budget management, expenses, and invoices
+- **Project Management Service**: Projects, tasks, tickets, and milestones
+- **Notification Service**: Email and broadcast notifications
+- **Gateway Service**: API routing and frontend asset serving
+
+### API Endpoint Categories
+
+**Resource Management APIs**
+
+```
+# Employee Management
+GET    /api/employees
+GET    /api/employees/{eid}
+PUT    /api/employees/{eid}
+DELETE /api/employees/{eid}
+GET    /api/employees/{eid}/attendance
+
+# Project Management
+GET    /api/projects
+GET    /api/projects/{pid}
+PUT    /api/projects/{pid}
+DELETE /api/projects/{pid}
+GET    /api/projects/{pid}/tasks
+POST   /api/projects/{pid}/tasks
+GET    /api/projects/{pid}/milestones
+
+# Financial Management
+GET    /api/budgets
+POST   /api/budgets
+GET    /api/expenses
+POST   /api/expenses
+PUT    /api/expenses/{eid}
+DELETE /api/expenses/{eid}
+GET    /api/invoices
+PUT    /api/invoices/{iid}
+DELETE /api/invoices/{iid}
 ```
 
-### Service Endpoints
+**Authentication & Authorization APIs**
 
-#### Core Services
+```
+POST /login
+POST /logout
+POST /refresh
+POST /register
+POST /change-password
+POST /roles
+PUT  /roles/{role_name}
+```
 
-**Authentication Service**
-- `POST /register` - User registration
-- `POST /login` - User authentication
-- `POST /roles` - Create roles
-- `PUT /roles/{role_name}` - Update role permissions
-- `PUT /{user_id}` - Update user details
-- `DELETE /{user_id}` - Delete user
-- `GET /api/auth/health` - Health check
+**Document & Knowledge Management APIs**
 
-**HR Service**
-- `GET /api/employees` - List employees
-- `GET /api/employees/{eid}/attendance` - Employee attendance
-- `POST /api/attendance` - Record attendance
-- `PUT /api/employees/{eid}` - Update employee
-- `PUT /api/leaves/{lid}` - Update leave request
-- `DELETE /api/employees/{eid}` - Delete employee
+```
+GET    /api/documents
+GET    /api/documents/view/{doc_hash}
+DELETE /api/documents/{doc_hash}
+POST   /ingest
+POST   /api/query
+POST   /query
+```
 
-**Finance Service**
-- `GET /api/budgets` - List budgets
-- `PUT /api/expenses/{eid}` - Update expense
-- `PUT /api/invoices/{iid}` - Update invoice
-- `DELETE /api/expenses/{eid}` - Delete expense
-- `DELETE /api/invoices/{iid}` - Delete invoice
+**Notification APIs**
 
-**Project Management Service**
-- `GET /api/projects/{pid}/tasks` - Project tasks
-- `GET /api/projects/{pid}/milestones` - Project milestones
-- `POST /api/projects/{pid}/tasks` - Create task
-- `POST /api/tickets` - Create ticket
-- `PUT /api/projects/{pid}` - Update project
-- `PUT /api/tasks/{tid}` - Update task
-- `PUT /api/tickets/{tid}` - Update ticket
-- `DELETE /api/projects/{pid}` - Delete project
-- `DELETE /api/tickets/{tid}` - Delete ticket
+```
+POST /notifications/broadcast
+POST /notifications/send-email
+POST /notifications/user/{userId}
+```
 
-**Notification Service**
-- `POST /notifications/broadcast` - Broadcast notifications
-- `POST /notifications/send-email` - Send email notifications
-- `POST /notifications/user/{userId}` - User-specific notifications
+### Data Models
 
-#### Document Management
+The API architecture supports the following core data models:
 
-**RAG Pipeline Service**
-- `GET /api/documents` - List documents
-- `GET /api/documents/view/{doc_hash}` - View document
-- `POST /ingest` - Ingest documents
-- `POST /api/query` - Query documents
-- `POST /query` - Alternative query endpoint
-- `DELETE /api/documents/{doc_hash}` - Delete document
-- `DELETE /documents/{doc_hash}` - Alternative delete endpoint
+- **Employee**: `wfh_used`, `status`, `sick_total`, `hire_date`, `email`, `wfh_total`
+- **Project**: `owner`, `priority`, `description`, `status`, `due_date`, `start_date`
+- **Task**: `status`, `priority`, `title`, `description`, `due_date`, `assignee`
+- **Ticket**: `priority`, `reporter`, `status`, `title`, `project_id`, `assignee`
+- **Budget**: `year`, `amount`, `department`, `month`, `period`, `notes`
+- **Invoice**: `description`, `due_date`, `client_name`, `amount`, `status`
+- **Expense**: `date`, `category`, `amount`, `title`, `status`, `notes`
+- **LeaveRequest**: `end_date`, `employee_id`, `type`, `start_date`, `status`, `reason`
+- **Attendance**: `employee_id`, `check_out`, `check_in`, `date`, `status`
 
-### Interface Contracts
+### Integration Patterns
 
-#### Request/Response Models
+**RAG Pipeline Integration**
+- Document ingestion and querying through specialized RAG service
+- Hash-based document identification for efficient retrieval
+- Query processing with retrieval-augmented generation capabilities
 
-**Core Data Models**
-- `Budget` - Financial budget with period, department, amount, month, notes, year
-- `Invoice` - Invoice with status, client_name, description, due_date, amount
-- `Expense` - Expense with submitted_by, title, notes, amount, status, category
-- `Employee` - Employee with sick_used, email, annual_total, sick_total, phone, department
-- `Attendance` - Attendance with status, check_out, date, employee_id, check_in
-- `LeaveRequest` - Leave request with reason, start_date, employee_id, status, type, end_date
-- `Project` - Project with description, start_date, status, owner, priority, name
-- `Task` - Task with status, description, due_date, title, priority, assignee
-- `Ticket` - Ticket with status, project_id, description, reporter, title, priority
-
-#### Service Configuration
-
-**Settings Configuration**
-- `PORT` - Service port
-- `HOST` - Service host
-- `MONGODB_URI` - Database connection
-- `JWT_SECRET` - Authentication secret
-- `INTERNAL_SERVICE_SECRET` - Inter-service communication
-- `FINANCE_SERVICE_URL` - Finance service endpoint
-
-### Frontend Integration
-
-The gateway serves compiled frontend assets and provides a catch-all handler for single-page application routing:
-
-- `GET *` - Catch-all for SPA routing
-- Static assets served from `/public/assets/`
+**Cross-Service Communication**
+- Standardized notification patterns for service coordination
+- Consistent authentication token validation across services
+- Unified configuration management through `Settings` classes

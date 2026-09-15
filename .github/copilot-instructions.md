@@ -77,125 +77,85 @@ If that file exists and a Jira ticket is clearly the subject of this conversatio
 ## 📜 Repository-Specific Instructions
 
 **architecture**
-- **Authentication Service**: User management, authentication, and authorization
-- Manages user authentication and authorization
-- Attendance tracking with check-in/check-out functionality
-- Security secrets (JWT, internal service authentication)
-- **Authentication Service**: Handles user authentication, authorization, roles, and permissions
-- **Security**: JWT-based authentication handled by auth service
-- User authentication and authorization
-- `Attendance` class for check-in/check-out tracking
-- `Milestone` entity for project checkpoint management
-- Protected endpoints validate tokens before processing requests
-- `POST /api/{resource}` → Service validation → Database insertion → Response
-- `PUT /api/{resource}/{id}` → Validation → Database update → Response
-- `DELETE /api/{resource}/{id}` → Authorization check → Cascade handling → Database deletion
-- Database connections are managed per service to avoid resource contention
-- Health check endpoints (`GET /api/health`, `GET /api/auth/health`) provide service availability monitoring
-- Update operations use dedicated update classes to ensure atomic modifications
-- Health check: `GET /api/auth/health`
-1. **Client Request**: React frontend initiates API calls through authenticated context
-    G->>A: Validate Credentials
-- User credentials flow to auth-service for validation
-- MongoDB URI configuration ensures consistent data persistence across services
-**Request Validation Flow:**
-1. Frontend validates input through React components
-2. Gateway performs routing validation
-3. Target service applies business rule validation
-4. Database constraints ensure data integrity
-PUT /api/{resource}/{id} → Service validation → Update class processing → Database update → Response
-This architecture ensures data consistency, security
-    Auth -.->|Validates| Gateway
-    classDef security fill:#ff9999
+3. **Auth Service**: User authentication and authorization
+- **Purpose**: User authentication and authorization management
+- **Authentication**: Centralized JWT-based authentication with service-level authorization
+- **Health Monitoring**: Health check endpoints for service availability
+- **auth-service**: Authentication and authorization with role-based access control
+    AuthService->>AuthService: Validate user
+- **Service Health Checks**: Each service exposes health endpoints (/api/auth/health, /api/health)
+- **Health Monitoring**: Each service exposes health check endpoints for system monitoring
+3. Token validation on subsequent requests
+- Health check endpoints for service monitoring
+This data flow design ensures consistent
+- **Authentication Enforcement**: Validates authentication tokens before routing to services
+- **Token Management**: Secure token generation and validation
+- **Content Integrity**: Hash-based identification ensures document integrity
+- **Stateless Authentication**: No server-side session storage required
+- **Cross-Service Security**: Consistent authentication across microservices
+**Authentication & Authorization APIs**
+- **Attendance**: `employee_id`, `check_out`, `check_in`, `date`, `status`
+- Consistent authentication token validation across services
 
 **Constraint / Operational**
-- **Auth Service**: User authentication and authorization
-- **Authentication**: JWT-based security
-| Auth Service | Authentication & authorization | MongoDB |
-- **Database**: Ensure MongoDB is accessible to all services
-- **Security**: Use consistent secrets across all services for internal authentication
 Before setting up OrganiStation
-| Variable | Description | Required |
-Ensure MongoDB is running and accessible via the configured `MONGODB_URI`.
-| Variable | Description | Required |
-   Ensure MongoDB is running locally or update `MONGODB_URI` to point to your MongoDB instance.
-| Variable | Description | Required |
+Verify your installations by running:
 
 *See [constraint_operational.md](constraint_operational.md) for complete details*
 
 **Constraint / Policy**
-- Frontend applications must authenticate users before accessing protected resources
-**API Security**
-- Gateway enforces authentication and authorization policies before forwarding requests
-- Microservices rely on gateway-level security validation
-- Services handle domain-specific authorization for their respective resources
+- **API Gateway Security**: All client requests are routed through the gateway component, providing a centralized point for security enforcement and request validation
+- **Service Isolation**: Microservices architecture ensures security boundaries between HR, Finance, and Notification services
+- **Frontend Security**: React frontend maintains authentication context for secure user sessions
+- **API Security**: RESTful API design with proper authentication flows
+- **Data Protection**: Service isolation ensures sensitive HR and Finance data remains within appropriate service boundaries
 
 *See [constraint_policy.md](constraint_policy.md) for complete details*
 
 **Constraint / Regulatory**
-All services must implement health check endpoints:
-- All REST endpoints must have corresponding test cases
-- Validate HTTP status codes, response structure, and data integrity
-- Validate data constraints and relationships
-- Authentication and authorization tests
-- Input validation and sanitization tests
-Multiple health check endpoints are provided for comprehensive system monitoring:
-- `/health` - System-level health check
-- **RESTful API Design**: All APIs must follow REST conventions with proper HTTP methods and resource-based URLs
-- **Health Check Implementation**: All services must provide comprehensive health check endpoints
-  - Health checks should verify service dependencies and system state
-- All API endpoints must be documented with:
-- Functions and classes must include clear docstrings
-- README files must be maintained for each service/module
-- Health check endpoint validation
-- Minimum code coverage thresholds must be maintained
-Multiple health check endpoints are implemented for comprehensive system monitoring:
+- All API responses must follow standardized schema patterns
+- Use configuration classes for response validation:
+**Authentication & Authorization**
+- Health check endpoints: `/api/auth/health`
+- **Isolation**: Tests must be independent and not rely on external dependencies
+- **API Endpoints**: All REST endpoints (GET, POST, DELETE) must have integration tests
+- **Health Checks**: Dedicated tests for health monitoring endpoints (`/api/health`, `/health`, `/ready`)
+- `GET /health` - Basic health check
+- Ensure proper error handling
+- Include health check endpoint documentation for monitoring purposes
+- Implement multiple health check endpoints for comprehensive system monitoring:
+- Implement proper error handling and validation
+- Maintain backward compatibility when making API changes
+- **Health Monitoring**: Implement standardized health check endpoints
+  - `/health` - Basic health check
 
 *See [constraint_regulatory.md](constraint_regulatory.md) for complete details*
 
 **Constraint / Resilience**
-- **Prefer ORM methods** for standard CRUD operations to maintain consistency and leverage built-in security features
-- **Use type-safe queries** when available in your ORM to catch errors at compile time
-- **Coordinate cross-service migrations** when changes affect multiple microservices
+- **finance-service**: Ensure decimal precision for monetary calculations
 
 *See [constraint_resilience.md](constraint_resilience.md) for complete details*
 
-**Constraint / Security**
-- `/api/health` - API-specific health check
-- Must serve as the single entry point for all client requests
-- Must serve frontend static assets
-- Must communicate exclusively through the gateway
-- Must handle authentication context management
-- Each microservice must maintain domain boundaries:
-  - `auth-service`: Authentication and authorization only
-- Must expose RESTful APIs for gateway consumption
-- Frontend must not import backend service code
-- API communication must use defined contracts only
-- Authentication context must be centrally managed
-- Format: `should_{expected_behavior}_when_{condition}`
-  - `should_return_employee_data_when_valid_id_provided`
-  - `should_throw_error_when_employee_not_found`
-  - `should_create_project_when_valid_data_submitted`
-- Clean up test data after each test run
-
-*See [constraint_security.md](constraint_security.md) for complete details*
+**Constraint / Security**: See [constraint_security.md](constraint_security.md) for detailed information
 
 **context**
-- **Health Monitoring**: Built-in health checks and service monitoring endpoints
-- **Attendance**: Tracks employee check-in/check-out times with status tracking
-- **Role**: Authorization entity with permission assignment capabilities
+- **User Management**: Authentication, authorization, role-based access control, and user administration
+- **Attendance**: Tracks daily employee presence with check_in, check_out, date, and status
+- Monitor daily check-in/check-out activities
+- **auth-service**: Manages User authentication and authorization
 - `GET /api/health` - API health check
-- `GET /api/auth/health` - Authentication service health check
-- **Hash-based Identification**: Documents use hash identifiers for security
-- **Health Monitoring**: Dedicated health check endpoints for service monitoring
-1. **Login**: `POST /login` authenticates credentials
-- **Health Monitoring**: Authentication service health checks at `/api/auth/health`
-- **Health Monitoring**: System-wide health checks via `/api/health`
-health monitoring to ensure system reliability, data consistency.
-1. **Service Discovery**: Identify required microservice endpoints through API gateway
-5. **Testing**: Validate API integrations using health check endpoints
-5. **Monitoring**: Add health check endpoints and logging for service observability
-- Inter-service authentication ensures secure communication within the deployment environment
+- **Login**: `POST /login` → Auth service validates credentials
+- **Logout**: `POST /logout` → Auth service invalidates session
+- **Health Checks**: `GET /api/health`, `GET /api/auth/health` → Services report operational status
+Integrated health check endpoints across services:
+3. **Track Attendance**: Check attendance records through `/api/employees/{eid}/attendance`
+2. **System Maintenance**: Use `/api/reset` for database operations when needed
+1. **Service Discovery**: Identify required microservice (auth, hr, finance, project-management, notification)
+5. **Testing**: Validate integration using health check endpoints like `/api/auth/health`
+4. **Database Integration**: Use proper data models with relationships and constraints
+4. **Monitoring Setup**: Implement health checks and monitoring across all services
+5. **Security Configuration**: Set up JWT authentication and role-based permissions
+| **auth-service** | Backend Service | Authentication & authorization | Database |
 
 *See [OrganiStation_context.md](OrganiStation_context.md) for complete details*
 
@@ -203,21 +163,53 @@ health monitoring to ensure system reliability, data consistency.
 
 **Direction / Feedback**: See [direction_feedback.md](direction_feedback.md) for detailed information
 
-**Direction / Intentional**: See [direction_intentional.md](direction_intentional.md) for detailed information
-
 **Direction / Learning**: See [direction_learning.md](direction_learning.md) for detailed information
 
 **Provenance / Boundary**: See [provenance_boundary.md](provenance_boundary.md) for detailed information
 
-**Provenance / Cognitive**: See [provenance_cognitive.md](provenance_cognitive.md) for detailed information
+**Provenance / Cognitive**
+- `/api/health` - API-specific health check
+- Each service (auth-service, hr-service, finance-service, notification-service) must maintain strict boundaries
+- Shared data must be accessed through service APIs
+- All external client requests must route through the API gateway
+- Services must not expose direct external endpoints
+- Services must not import code directly from other services
+- Database models are service-private and must not be imported across services
+- Authentication context must be managed centrally
+- All services must implement health check endpoints
+- Services must use standardized logging, environment-specific
 
-**Provenance / Decision**: See [provenance_decision.md](provenance_decision.md) for detailed information
-
-**Provenance / Dependency**: See [provenance_dependency.md](provenance_dependency.md) for detailed information
+*See [provenance_cognitive.md](provenance_cognitive.md) for complete details*
 
 **Provenance / Stakeholder**: See [provenance_stakeholder.md](provenance_stakeholder.md) for detailed information
 
-**Provenance / Structural**: See [provenance_structural.md](provenance_structural.md) for detailed information
+**rules**
+- **MUST** start with `test_`
+- **MUST** end with `.py`
+- **MUST** mirror source code structure
+- **MUST** start with `test_`
+- **MUST** use descriptive names indicating what is being tested
+- **MUST** include expected outcome in name
+- **MUST** start with `Test`
+- **MUST** use PascalCase
+- Tests **MUST NOT** depend on execution order
+- Tests **MUST** clean up their own state
+- Tests **MUST NOT** share mutable state
+- **MUST** have at least one assertion per test
+- **MUST** test one logical concept per test function
+- **MUST** test all HTTP methods (GET, POST, DELETE)
+- **MUST** test both success and error scenarios
+- **MUST** validate response status codes
+- **MUST** validate response data structure
+
+**README**
+- **Authentication & Authorization**: Role-based access control with comprehensive permission management
+- **Auth Service**: Centralized authentication and authorization
+Before setting up OrganiStation
+  - **Solution**: Ensure you have the correct Node.js version installed and try clearing npm cache with `npm cache clean --force`
+  - **Solution**: Check that all required environment variables are set and ports are available
+
+*See [setup/README.md](setup/README.md) for complete details*
 
 ## 💡 Quick Reference
 
@@ -230,4 +222,4 @@ health monitoring to ensure system reliability, data consistency.
 - **Working on setup readme topics**: [setup/README.md](setup/README.md)
 - **Working on standards topics**: [standards.md](standards.md)
 
-*This instruction index references 17 context documents.*
+*This instruction index references 15 context documents.*
