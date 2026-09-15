@@ -6,19 +6,33 @@ applyTo: '**'
 ## Security Architecture
 ### Authentication and Authorization
 
-**Authentication Flow**
-- All user authentication is centralized through the dedicated auth-service
-- Frontend applications must authenticate users before accessing protected resources
-- Authentication context is maintained throughout the React application lifecycle
+The OrganiStation platform implements a centralized authentication architecture through a dedicated auth-service component that manages user authentication, roles, and permissions across all system services.
 
-**API Security**
-- All external API access is routed through the API Gateway
-- Gateway enforces authentication and authorization policies before forwarding requests
-- Microservices rely on gateway-level security validation
+#### Service-Level Security
 
-**Service-to-Service Communication**
-- Internal service communication occurs within the secured microservices network
-- Each service (hr-service, finance-service, notification-service) operates within isolated boundaries
-- Services handle domain-specific authorization for their respective resources
+- **API Gateway Security**: All client requests are routed through the gateway component, providing a centralized point for security enforcement and request validation
+- **Authentication Service**: Dedicated auth-service handles user authentication with comprehensive user, role, and permission models
+- **Service Isolation**: Microservices architecture ensures security boundaries between HR, Finance, and Notification services
 
-### Access Control Principles
+#### Access Control Framework
+
+- **Role-Based Access Control (RBAC)**: Authentication service implements role and permission models for granular access control
+- **Service-to-Service Communication**: Internal service communication follows secure patterns through the API gateway
+- **Document Security**: Hash-based document identification system provides secure document management
+
+#### Security Boundaries
+
+- **Frontend Security**: React frontend maintains authentication context for secure user sessions
+- **API Security**: RESTful API design with proper authentication flows
+- **Data Protection**: Service isolation ensures sensitive HR and Finance data remains within appropriate service boundaries
+
+## Security Policies
+### Authentication Requirements
+
+### Data Protection
+
+### Secret Management
+
+passwords
+
+### Compliance Framework
