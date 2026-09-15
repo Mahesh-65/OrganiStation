@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "generated_at": "2026-09-15T06:40:40.350067+00:00",
+  "generation_type": "flat_generation",
+  "project": {
+    "id": "9c566995-3384-465f-b17f-f099c4cdf024",
+    "name": "organistation",
+    "description": "",
+    "repository_count": 1
+  },
+  "knowledgeSources": [
+    {
+      "id": "organistation",
+      "type": "git",
+      "location": [
+        "https://github.com/Mahesh-65/OrganiStation.git"
+      ],
+      "branch": "main",
+      "include": [
+        "**/*.md"
+      ]
+    }
+  ],
+  "repositories": {
+    "OrganiStation": {
+      "url": "https://github.com/Mahesh-65/OrganiStation",
+      "branch": "main",
+      "language": "python",
+      "status": "ready"
+    }
+  },
+  "artifacts": {
+    ".kiro/settings/mcp.json": {
+      "type": "json_configuration",
+      "generatedAt": "2026-09-15T06:40:40.350067+00:00",
+      "source": "migration"
+    },
+    ".kiro/agents/story_eval_agent.md": {
+      "type": "markdown_document",
+      "generatedAt": "2026-09-15T06:40:40.350067+00:00",
+      "source": "migration"
+    }
+  },
+  "agents": {
+    "story-eval": {
+      "path": ".kiro/agents/story_eval_agent.md",
+      "type": "advisory",
+      "description": "Advisory Jira-story validator"
+    }
+  },
+  "mcp": {
+    "config_path": ".kiro/settings/mcp.json",
+    "servers": [
+      "jira"
+    ]
+  },
+  "statistics": {
+    "total_knowledge_sources": 1,
+    "total_repositories": 1,
+    "total_artifacts": 2
+  }
+}
